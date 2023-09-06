@@ -48,13 +48,13 @@ foreach (table_status('', true) as $table => $table_status) {
 }
 
 ?>
-<div id="schema" style="height: <?php echo $top; ?>em;">
-<script<?php echo nonce(); ?>>
+<div id="schema" style="height: <?=$top ?>em;">
+<script<?=nonce() ?>>
 qs('#schema').onselectstart = function () { return false; };
-var tablePos = {<?php echo implode(",", $table_pos_js) . "\n"; ?>};
-var em = qs('#schema').offsetHeight / <?php echo $top; ?>;
+var tablePos = {<?=implode(",", $table_pos_js) . "\n" ?>};
+var em = qs('#schema').offsetHeight / <?=$top ?>;
 document.onmousemove = schemaMousemove;
-document.onmouseup = partialArg(schemaMouseup, '<?php echo js_escape(DB); ?>');
+document.onmouseup = partialArg(schemaMouseup, '<?=js_escape(DB) ?>');
 </script>
 <?php
 foreach ($schema as $name => $table) {
@@ -107,4 +107,4 @@ foreach ($schema as $name => $table) {
 }
 ?>
 </div>
-<p class="links"><a href="<?php echo h(ME . "schema=" . urlencode($SCHEMA)); ?>" id="schema-link"><?php echo lang('Permanent link'); ?></a>
+<p class="links"><a href="<?=h(ME . "schema=" . urlencode($SCHEMA)); ?>" id="schema-link"><?=lang('Permanent link') ?></a>

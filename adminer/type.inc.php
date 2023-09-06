@@ -29,5 +29,5 @@ if ($TYPE != "") {
 	echo "<p><input type='submit' value='" . lang('Save') . "'>\n";
 }
 ?>
-<input type="hidden" name="token" value="<?php echo $token; ?>">
+<input type="hidden" name="token" value="<?=$token ?>">
 </form>

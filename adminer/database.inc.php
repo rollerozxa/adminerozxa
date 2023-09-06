@@ -64,11 +64,10 @@ echo ($_POST["add_x"] || strpos($name, "\n")
 ) . "\n" . ($collations ? html_select("collation", array("" => "(" . lang('collation') . ")") + $collations, $row["collation"]) . doc_link(array(
 	'sql' => "charset-charsets.html",
 	'mariadb' => "supported-character-sets-and-collations/",
-	'mssql' => "ms187963.aspx",
 )) : "");
 echo script("focus(qs('#name'));");
 ?>
-<input type="submit" value="<?php echo lang('Save'); ?>">
+<input type="submit" value="<?=lang('Save') ?>">
 <?php
 if (DB != "") {
 	echo "<input type='submit' name='drop' value='" . lang('Drop') . "'>" . confirm(lang('Drop %s?', DB)) . "\n";
@@ -76,5 +75,5 @@ if (DB != "") {
 	echo "<input type='image' class='icon' name='add' src='../adminer/static/plus.gif' alt='+' title='" . lang('Add next') . "'>\n";
 }
 ?>
-<input type="hidden" name="token" value="<?php echo $token; ?>">
+<input type="hidden" name="token" value="<?=$token ?>">
 </form>

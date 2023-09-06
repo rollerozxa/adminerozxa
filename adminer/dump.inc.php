@@ -171,8 +171,8 @@ echo "<tr><th>" . lang('Tables') . "<td>" . html_select('table_style', $table_st
 echo "<tr><th>" . lang('Data') . "<td>" . html_select('data_style', $data_style, $row["data_style"]);
 ?>
 </table>
-<p><input type="submit" value="<?php echo lang('Export'); ?>">
-<input type="hidden" name="token" value="<?php echo $token; ?>">
+<p><input type="submit" value="<?=lang('Export') ?>">
+<input type="hidden" name="token" value="<?=$token ?>">
 
 <table cellspacing="0">
 <?php

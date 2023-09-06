@@ -31,19 +31,18 @@ if ($_POST) {
 
 page_header(($name != "" ? lang('Alter trigger') . ": " . h($name) : lang('Create trigger')), $error, array("table" => $TABLE));
 ?>
-
 <form action="" method="post" id="form">
 <table cellspacing="0" class="layout">
-<tr><th><?php echo lang('Time'); ?><td><?php echo html_select("Timing", $trigger_options["Timing"], $row["Timing"], "triggerChange(/^" . preg_quote($TABLE, "/") . "_[ba][iud]$/, '" . js_escape($TABLE) . "', this.form);"); ?>
-<tr><th><?php echo lang('Event'); ?><td><?php echo html_select("Event", $trigger_options["Event"], $row["Event"], "this.form['Timing'].onchange();"); ?>
-<?php echo (in_array("UPDATE OF", $trigger_options["Event"]) ? " <input name='Of' value='" . h($row["Of"]) . "' class='hidden'>": ""); ?>
-<tr><th><?php echo lang('Type'); ?><td><?php echo html_select("Type", $trigger_options["Type"], $row["Type"]); ?>
+<tr><th><?=lang('Time'); ?><td><?=html_select("Timing", $trigger_options["Timing"], $row["Timing"], "triggerChange(/^" . preg_quote($TABLE, "/") . "_[ba][iud]$/, '" . js_escape($TABLE) . "', this.form);") ?>
+<tr><th><?=lang('Event'); ?><td><?=html_select("Event", $trigger_options["Event"], $row["Event"], "this.form['Timing'].onchange();") ?>
+<?=(in_array("UPDATE OF", $trigger_options["Event"]) ? " <input name='Of' value='" . h($row["Of"]) . "' class='hidden'>": "") ?>
+<tr><th><?=lang('Type'); ?><td><?=html_select("Type", $trigger_options["Type"], $row["Type"]) ?>
 </table>
-<p><?php echo lang('Name'); ?>: <input name="Trigger" value="<?php echo h($row["Trigger"]); ?>" data-maxlength="64" autocapitalize="off">
-<?php echo script("qs('#form')['Timing'].onchange();"); ?>
+<p><?=lang('Name'); ?>: <input name="Trigger" value="<?=h($row["Trigger"]) ?>" data-maxlength="64" autocapitalize="off">
+<?=script("qs('#form')['Timing'].onchange();") ?>
 <p><?php textarea("Statement", $row["Statement"]); ?>
 <p>
-<input type="submit" value="<?php echo lang('Save'); ?>">
-<?php if ($name != "") { ?><input type="submit" name="drop" value="<?php echo lang('Drop'); ?>"><?php echo confirm(lang('Drop %s?', $name)); ?><?php } ?>
-<input type="hidden" name="token" value="<?php echo $token; ?>">
+<input type="submit" value="<?=lang('Save') ?>">
+<?php if ($name != "") { ?><input type="submit" name="drop" value="<?=lang('Drop'); ?>"><?=confirm(lang('Drop %s?', $name)) ?><?php } ?>
+<input type="hidden" name="token" value="<?=$token ?>">
 </form>

@@ -56,6 +56,6 @@ if (support("kill")) {
 	echo "<p><input type='submit' value='" . lang('Kill') . "'>\n";
 }
 ?>
-<input type="hidden" name="token" value="<?php echo $token; ?>">
+<input type="hidden" name="token" value="<?=$token ?>">
 </form>
-<?php echo script("tableCheck();"); ?>
+<?=script("tableCheck();") ?>

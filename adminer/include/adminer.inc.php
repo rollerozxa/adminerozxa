@@ -952,7 +952,7 @@ class Adminer {
 		global $VERSION, $jush, $drivers, $connection;
 		?>
 <h1>
-<?php echo $this->name(); ?> <span class="version"><?php echo $VERSION; ?></span>
+<?=$this->name(); ?> <span class="version"><?=$VERSION ?></span>
 </h1>
 <?php
 		if ($missing == "auth") {
@@ -985,7 +985,7 @@ class Adminer {
 			if (support("sql")) {
 				echo script_src("../externals/jush/modules/jush-$jush.js");
 				?>
-<script<?php echo nonce(); ?>>
+<script<?=nonce() ?>>
 <?php
 				if ($tables) {
 					$links = array();
@@ -999,7 +999,7 @@ class Adminer {
 				}
 				$server_info = $connection->server_info;
 				?>
-bodyLoad('<?php echo (is_object($connection) ? preg_replace('~^(\d\.?\d).*~s', '\1', $server_info) : ""); ?>'<?php echo (preg_match('~MariaDB~', $server_info) ? ", true" : ""); ?>);
+bodyLoad('<?=(is_object($connection) ? preg_replace('~^(\d\.?\d).*~s', '\1', $server_info) : ""); ?>'<?=(preg_match('~MariaDB~', $server_info) ? ", true" : "") ?>);
 </script>
 <?php
 			}
@@ -1039,33 +1039,30 @@ bodyLoad('<?php echo (is_object($connection) ? preg_replace('~^(\d\.?\d).*~s', '
 		}
 		?>
 <form action="">
+<p id="dbs">
 <?php
-		echo "<table id='dbs'><tr><td width=1>";
 		hidden_fields_get();
 		$db_events = script("mixin(qsl('select'), {onmousedown: dbMouseDown, onchange: dbChange});");
-		echo "<label title='" . lang('database') . "' for='menu_db'>" . lang('DB') . "</label>:</td><td>" . ($databases
-			? "<select name='db' id='menu_db'>" . optionlist(array("" => "") + $databases, DB) . "</select>$db_events"
-			: "<input name='db' id='menu_db' value='" . h(DB) . "' autocapitalize='off'>\n"
+		echo "<span title='" . lang('database') . "'>" . lang('DB') . "</span>: " . ($databases
+			? "<select name='db'>" . optionlist(array("" => "") + $databases, DB) . "</select>$db_events"
+			: "<input name='db' value='" . h(DB) . "' autocapitalize='off'>\n"
 		);
-		echo "</td></tr>";
+		echo "<input type='submit' value='" . lang('Use') . "'" . ($databases ? " class='hidden'" : "") . ">\n";
 		if (support("scheme")) {
 			if ($missing != "db" && DB != "" && $connection->select_db(DB)) {
-				echo "<tr><td><label for='menu_ns'>" . lang('Schema') . ":</label></td>";
-				echo "<td><select name='ns' id='menu_ns'>" . optionlist(array("" => "") + $adminer->schemas(), $_GET["ns"]) . "</select>$db_events";
+				echo "<br>" . lang('Schema') . ": <select name='ns'>" . optionlist(array("" => "") + $adminer->schemas(), $_GET["ns"]) . "</select>$db_events";
 				if ($_GET["ns"] != "") {
 					set_schema($_GET["ns"]);
 				}
-				echo "</td></tr>";
 			}
 		}
-		echo "<tr" . ($databases ? " class='hidden'" : "") . "><td colspan=2><input type='submit' value='" . lang('Use') . "'></td></tr>\n";
-		echo "</table>";
 		foreach (array("import", "sql", "schema", "dump", "privileges") as $val) {
 			if (isset($_GET[$val])) {
 				echo "<input type='hidden' name='$val' value=''>";
 				break;
 			}
 		}
+		echo "</p></form>\n";
 	}
 
 	/** Prints table list in menu
@@ -1093,4 +1090,3 @@ bodyLoad('<?php echo (is_object($connection) ? preg_replace('~^(\d\.?\d).*~s', '
 	}
 
 }
-?>

@@ -29,10 +29,10 @@ class AdminerTinymce {
 		}
 		echo script_src($this->path);
 		?>
-<script<?php echo nonce(); ?>>
+<script<?=nonce() ?>>
 tinyMCE.init({
 	entity_encoding: 'raw',
-	language: '<?php echo $lang; ?>'
+	language: '<?=$lang ?>'
 }); // learn how to customize here: https://www.tinymce.com/docs/configure/
 </script>
 <?php

@@ -35,9 +35,9 @@ $routine_languages = routine_languages();
 ?>
 
 <form action="" method="post" id="form">
-<p><?php echo lang('Name'); ?>: <input name="name" value="<?php echo h($row["name"]); ?>" data-maxlength="64" autocapitalize="off">
-<?php echo ($routine_languages ? lang('Language') . ": " . html_select("language", $routine_languages, $row["language"]) . "\n" : ""); ?>
-<input type="submit" value="<?php echo lang('Save'); ?>">
+<p><?=lang('Name'); ?>: <input name="name" value="<?=h($row["name"]) ?>" data-maxlength="64" autocapitalize="off">
+<?=($routine_languages ? lang('Language') . ": " . html_select("language", $routine_languages, $row["language"]) . "\n" : "") ?>
+<input type="submit" value="<?=lang('Save') ?>">
 <div class="scrollable">
 <table cellspacing="0" class="nowrap">
 <?php
@@ -48,11 +48,11 @@ if (isset($_GET["function"])) {
 }
 ?>
 </table>
-<?php echo script("editFields();"); ?>
+<?=script("editFields();") ?>
 </div>
 <p><?php textarea("definition", $row["definition"]); ?>
 <p>
-<input type="submit" value="<?php echo lang('Save'); ?>">
-<?php if ($PROCEDURE != "") { ?><input type="submit" name="drop" value="<?php echo lang('Drop'); ?>"><?php echo confirm(lang('Drop %s?', $PROCEDURE)); ?><?php } ?>
-<input type="hidden" name="token" value="<?php echo $token; ?>">
+<input type="submit" value="<?=lang('Save') ?>">
+<?php if ($PROCEDURE != "") { ?><input type="submit" name="drop" value="<?=lang('Drop'); ?>"><?=confirm(lang('Drop %s?', $PROCEDURE)) ?><?php } ?>
+<input type="hidden" name="token" value="<?=$token ?>">
 </form>

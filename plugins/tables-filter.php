@@ -8,7 +8,7 @@
 */
 class AdminerTablesFilter {
 	function tablesPrint($tables) { ?>
-<script<?php echo nonce(); ?>>
+<script<?=nonce() ?>>
 var tablesFilterTimeout = null;
 var tablesFilterValue = '';
 
@@ -79,11 +79,11 @@ sessionStorage && document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <fieldset style="margin-left: .8em;">
-	<legend><?php echo lang('Filter tables'); ?></legend>
+	<legend><?=lang('Filter tables') ?></legend>
 	<div>
-		<input type="search" id="filter-field" autocomplete="off" placeholder="Ctrl + Shift + F"><?php echo script("qs('#filter-field').oninput = tablesFilterInput;"); ?>
-		<input type="button" id="filter-field-reset" value="<?php echo lang('Clear'); ?>">
-		<?php echo script("qs('#filter-field-reset').onclick = function() { qs('#filter-field').value = ''; qs('#filter-field').dispatchEvent(new Event('input')); }"); ?>
+		<input type="search" id="filter-field" autocomplete="off" placeholder="Ctrl + Shift + F"><?=script("qs('#filter-field').oninput = tablesFilterInput;") ?>
+		<input type="button" id="filter-field-reset" value="<?=lang('Clear') ?>">
+		<?=script("qs('#filter-field-reset').onclick = function() { qs('#filter-field').value = ''; qs('#filter-field').dispatchEvent(new Event('input')); }") ?>
 	</div>
 </fieldset>
 

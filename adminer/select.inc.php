@@ -532,13 +532,13 @@ if (!$columns && support("table")) {
 
 				if ($adminer->selectCommandPrint()) {
 					?>
-<fieldset<?php echo ($_GET["modify"] ? '' : ' class="jsonly"'); ?>><legend><?php echo lang('Modify'); ?></legend><div>
-<input type="submit" value="<?php echo lang('Save'); ?>"<?php echo ($_GET["modify"] ? '' : ' title="' . lang('Ctrl+click on a value to modify it.') . '"'); ?>>
+<fieldset<?=($_GET["modify"] ? '' : ' class="jsonly"'); ?>><legend><?=lang('Modify') ?></legend><div>
+<input type="submit" value="<?=lang('Save'); ?>"<?=($_GET["modify"] ? '' : ' title="' . lang('Ctrl+click on a value to modify it.') . '"') ?>>
 </div></fieldset>
-<fieldset><legend><?php echo lang('Selected'); ?> <span id="selected"></span></legend><div>
-<input type="submit" name="edit" value="<?php echo lang('Edit'); ?>">
-<input type="submit" name="clone" value="<?php echo lang('Clone'); ?>">
-<input type="submit" name="delete" value="<?php echo lang('Delete'); ?>"><?php echo confirm(); ?>
+<fieldset><legend><?=lang('Selected') ?> <span id="selected"></span></legend><div>
+<input type="submit" name="edit" value="<?=lang('Edit') ?>">
+<input type="submit" name="clone" value="<?=lang('Clone') ?>">
+<input type="submit" name="delete" value="<?=lang('Delete'); ?>"><?=confirm() ?>
 </div></fieldset>
 <?php
 				}

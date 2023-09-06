@@ -17,52 +17,30 @@ function page_header($title, $error = "", $breadcrumb = array(), $title2 = "") {
 	$title_page = strip_tags($title_all . (SERVER != "" && SERVER != "localhost" ? h(" - " . SERVER) : "") . " - " . $adminer->name());
 	?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG; ?>" dir="<?php echo lang('ltr'); ?>">
+<html lang="<?=$LANG; ?>" dir="<?=lang('ltr') ?>">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="robots" content="noindex">
-<title><?php echo $title_page; ?></title>
+<title><?=$title_page ?></title>
 <link rel="stylesheet" type="text/css" href="../adminer/static/default.css">
-<?php echo script_src("../adminer/static/functions.js"); ?>
-<?php echo script_src("static/editing.js"); ?>
+<?=script_src("../adminer/static/functions.js") ?>
+<?=script_src("static/editing.js") ?>
 <?php if ($adminer->head()) { ?>
 <link rel="shortcut icon" type="image/x-icon" href="../adminer/static/favicon.ico">
 <link rel="apple-touch-icon" href="../adminer/static/favicon.ico">
 <?php foreach ($adminer->css() as $css) { ?>
-<link rel="stylesheet" type="text/css" href="<?php echo h($css); ?>">
+<link rel="stylesheet" type="text/css" href="<?=h($css) ?>">
 <?php } ?>
 <?php } ?>
 
-<body class="<?php echo lang('ltr'); ?> nojs">
-<?php
-	$filename = get_temp_dir() . "/adminer.version";
-	if (!$_COOKIE["adminer_version"] && function_exists('openssl_verify') && file_exists($filename) && filemtime($filename) + 86400 > time()) { // 86400 - 1 day in seconds
-		$version = unserialize(file_get_contents($filename));
-		$public = "-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwqWOVuF5uw7/+Z70djoK
-RlHIZFZPO0uYRezq90+7Amk+FDNd7KkL5eDve+vHRJBLAszF/7XKXe11xwliIsFs
-DFWQlsABVZB3oisKCBEuI71J4kPH8dKGEWR9jDHFw3cWmoH3PmqImX6FISWbG3B8
-h7FIx3jEaw5ckVPVTeo5JRm/1DZzJxjyDenXvBQ/6o9DgZKeNDgxwKzH+sw9/YCO
-jHnq1cFpOIISzARlrHMa/43YfeNRAm/tsBXjSxembBPo7aQZLAWHmaj5+K19H10B
-nCpz9Y++cipkVEiKRGih4ZEvjoFysEOdRLj6WiD/uUNky4xGeA6LaJqh5XpkFkcQ
-fQIDAQAB
------END PUBLIC KEY-----
-";
-		if (openssl_verify($version["version"], base64_decode($version["signature"]), $public) == 1) {
-			$_COOKIE["adminer_version"] = $version["version"]; // doesn't need to send to the browser
-		}
-	}
-	?>
-<script<?php echo nonce(); ?>>
-mixin(document.body, {onkeydown: bodyKeydown, onclick: bodyClick<?php
-	echo (isset($_COOKIE["adminer_version"]) ? "" : ", onload: partial(verifyVersion, '$VERSION', '" . js_escape(ME) . "', '" . get_token() . "')"); // $token may be empty in auth.inc.php
-	?>});
+<body class="<?=lang('ltr') ?> nojs">
+<script<?=nonce() ?>>
 document.body.className = document.body.className.replace(/ nojs/, ' js');
-var offlineMessage = '<?php echo js_escape(lang('You are offline.')); ?>';
-var thousandsSeparator = '<?php echo js_escape(lang(',')); ?>';
+var offlineMessage = '<?=js_escape(lang('You are offline.')) ?>';
+var thousandsSeparator = '<?=js_escape(lang(',')) ?>';
 </script>
 
-<div id="help" class="jush-<?php echo $jush; ?> jsonly hidden"></div>
-<?php echo script("mixin(qs('#help'), {onmouseover: function () { helpOpen = 1; }, onmouseout: helpMouseout});"); ?>
+<div id="help" class="jush-<?=$jush ?> jsonly hidden"></div>
+<?=script("mixin(qs('#help'), {onmouseover: function () { helpOpen = 1; }, onmouseout: helpMouseout});") ?>
 
 <div id="content">
 <?php
@@ -182,8 +160,8 @@ function page_footer($missing = "") {
 <?php if ($missing != "auth") { ?>
 <form action="" method="post">
 <p class="logout">
-<input type="submit" name="logout" value="<?php echo lang('Logout'); ?>" id="logout">
-<input type="hidden" name="token" value="<?php echo $token; ?>">
+<input type="submit" name="logout" value="<?=lang('Logout') ?>" id="logout">
+<input type="hidden" name="token" value="<?=$token ?>">
 </p>
 </form>
 <?php } ?>

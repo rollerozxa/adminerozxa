@@ -174,7 +174,7 @@ function edit_type($key, $field, $collations, $foreign_keys = array(), $extra_ty
 	global $structured_types, $types, $unsigned, $on_actions;
 	$type = $field["type"];
 	?>
-<td><select name="<?php echo h($key); ?>[type]" class="type" aria-labelledby="label-type"><?php
+<td><select name="<?=h($key) ?>[type]" class="type" aria-labelledby="label-type"><?php
 if ($type && !isset($types[$type]) && !isset($foreign_keys[$type]) && !in_array($type, $extra_types)) {
 	$extra_types[] = $type;
 }
@@ -182,7 +182,7 @@ if ($foreign_keys) {
 	$structured_types[lang('Foreign keys')] = $foreign_keys;
 }
 echo optionlist(array_merge($extra_types, $structured_types), $type);
-?></select><td><input name="<?php echo h($key); ?>[length]" value="<?php echo h($field["length"]); ?>" size="3"<?php echo (!$field["length"] && preg_match('~var(char|binary)$~', $type) ? " class='required'" : ""); //! type="number" with enabled JavaScript ?> aria-labelledby="label-length"><td class="options"><?php
+?></select><td><input name="<?=h($key); ?>[length]" value="<?=h($field["length"]) ?>" size="3"<?php echo (!$field["length"] && preg_match('~var(char|binary)$~', $type) ? " class='required'" : ""); //! type="number" with enabled JavaScript ?> aria-labelledby="label-length"><td class="options"><?php
 	echo "<select name='" . h($key) . "[collation]'" . (preg_match('~(char|text|enum|set)$~', $type) ? "" : " class='hidden'") . '><option value="">(' . lang('collation') . ')' . optionlist($collations, $field["collation"]) . '</select>';
 	echo ($unsigned ? "<select name='" . h($key) . "[unsigned]'" . (!$type || preg_match(number_type(), $type) ? "" : " class='hidden'") . '><option>' . optionlist($unsigned, $field["unsigned"]) . '</select>' : '');
 	echo (isset($field['on_update']) ? "<select name='" . h($key) . "[on_update]'" . (preg_match('~timestamp|datetime~', $type) ? "" : " class='hidden'") . '>' . optionlist(array("" => "(" . lang('ON UPDATE') . ")", "CURRENT_TIMESTAMP"), (preg_match('~^CURRENT_TIMESTAMP~i', $field["on_update"]) ? "CURRENT_TIMESTAMP" : $field["on_update"])) . '</select>' : '');
@@ -273,23 +273,23 @@ function edit_fields($fields, $collations, $type = "TABLE", $foreign_keys = arra
 	?>
 <thead><tr>
 <?php if ($type == "PROCEDURE") { ?><td><?php } ?>
-<th id="label-name"><?php echo ($type == "TABLE" ? lang('Column name') : lang('Parameter name')); ?>
-<td id="label-type"><?php echo lang('Type'); ?><textarea id="enum-edit" rows="4" cols="12" wrap="off" style="display: none;"></textarea><?php echo script("qs('#enum-edit').onblur = editingLengthBlur;"); ?>
-<td id="label-length"><?php echo lang('Length'); ?>
-<td><?php echo lang('Options'); /* no label required, options have their own label */ ?>
+<th id="label-name"><?=($type == "TABLE" ? lang('Column name') : lang('Parameter name')) ?>
+<td id="label-type"><?=lang('Type'); ?><textarea id="enum-edit" rows="4" cols="12" wrap="off" style="display: none;"></textarea><?=script("qs('#enum-edit').onblur = editingLengthBlur;") ?>
+<td id="label-length"><?=lang('Length') ?>
+<td><?=lang('Options'); /* no label required, options have their own label */ ?>
 <?php if ($type == "TABLE") { ?>
 <td id="label-null">NULL
-<td><input type="radio" name="auto_increment_col" value=""><acronym id="label-ai" title="<?php echo lang('Auto Increment'); ?>">AI</acronym><?php echo doc_link(array(
+<td><input type="radio" name="auto_increment_col" value=""><acronym id="label-ai" title="<?=lang('Auto Increment') ?>">AI</acronym><?php echo doc_link(array(
 	'sql' => "example-auto-increment.html",
 	'mariadb' => "auto_increment/",
 	'sqlite' => "autoinc.html",
 	'pgsql' => "datatype.html#DATATYPE-SERIAL",
 	'mssql' => "ms186775.aspx",
 )); ?>
-<td id="label-default"<?php echo $default_class; ?>><?php echo lang('Default value'); ?>
-<?php echo (support("comment") ? "<td id='label-comment'$comment_class>" . lang('Comment') : ""); ?>
+<td id="label-default"<?=$default_class; ?>><?=lang('Default value') ?>
+<?=(support("comment") ? "<td id='label-comment'$comment_class>" . lang('Comment') : "") ?>
 <?php } ?>
-<td><?php echo "<input type='image' class='icon' name='add[" . (support("move_col") ? 0 : count($fields)) . "]' src='../adminer/static/plus.gif' alt='+' title='" . lang('Add next') . "'>" . script("row_count = " . count($fields) . ";"); ?>
+<td><?="<input type='image' class='icon' name='add[" . (support("move_col") ? 0 : count($fields)) . "]' src='../adminer/static/plus.gif' alt='+' title='" . lang('Add next') . "'>" . script("row_count = " . count($fields) . ";") ?>
 </thead>
 <tbody>
 <?php
@@ -299,14 +299,14 @@ function edit_fields($fields, $collations, $type = "TABLE", $foreign_keys = arra
 		$orig = $field[($_POST ? "orig" : "field")];
 		$display = (isset($_POST["add"][$i-1]) || (isset($field["field"]) && !$_POST["drop_col"][$i])) && (support("drop_col") || $orig == "");
 		?>
-<tr<?php echo ($display ? "" : " style='display: none;'"); ?>>
-<?php echo ($type == "PROCEDURE" ? "<td>" . html_select("fields[$i][inout]", explode("|", $inout), $field["inout"]) : ""); ?>
-<th><?php if ($display) { ?><input name="fields[<?php echo $i; ?>][field]" value="<?php echo h($field["field"]); ?>" data-maxlength="64" autocapitalize="off" aria-labelledby="label-name"><?php } ?>
-<input type="hidden" name="fields[<?php echo $i; ?>][orig]" value="<?php echo h($orig); ?>"><?php edit_type("fields[$i]", $field, $collations, $foreign_keys); ?>
+<tr<?=($display ? "" : " style='display: none;'") ?>>
+<?=($type == "PROCEDURE" ? "<td>" . html_select("fields[$i][inout]", explode("|", $inout), $field["inout"]) : "") ?>
+<th><?php if ($display) { ?><input name="fields[<?=$i; ?>][field]" value="<?=h($field["field"]) ?>" data-maxlength="64" autocapitalize="off" aria-labelledby="label-name"><?php } ?>
+<input type="hidden" name="fields[<?=$i; ?>][orig]" value="<?=h($orig); ?>"><?php edit_type("fields[$i]", $field, $collations, $foreign_keys) ?>
 <?php if ($type == "TABLE") { ?>
-<td><?php echo checkbox("fields[$i][null]", 1, $field["null"], "", "", "block", "label-null"); ?>
-<td><label class="block"><input type="radio" name="auto_increment_col" value="<?php echo $i; ?>"<?php if ($field["auto_increment"]) { ?> checked<?php } ?> aria-labelledby="label-ai"></label><td<?php echo $default_class; ?>><?php
-			echo checkbox("fields[$i][has_default]", 1, $field["has_default"], "", "", "", "label-default"); ?><input name="fields[<?php echo $i; ?>][default]" value="<?php echo h($field["default"]); ?>" aria-labelledby="label-default"><?php
+<td><?=checkbox("fields[$i][null]", 1, $field["null"], "", "", "block", "label-null") ?>
+<td><label class="block"><input type="radio" name="auto_increment_col" value="<?=$i; ?>"<?php if ($field["auto_increment"]) { ?> checked<?php } ?> aria-labelledby="label-ai"></label><td<?=$default_class ?>><?php
+			echo checkbox("fields[$i][has_default]", 1, $field["has_default"], "", "", "", "label-default"); ?><input name="fields[<?=$i; ?>][default]" value="<?=h($field["default"]) ?>" aria-labelledby="label-default"><?php
 			echo (support("comment") ? "<td$comment_class><input name='fields[$i][comment]' value='" . h($field["comment"]) . "' data-maxlength='" . (min_version(5.5) ? 1024 : 255) . "' aria-labelledby='label-comment'>" : "");
 		}
 		echo "<td>";
@@ -533,10 +533,6 @@ function doc_link($paths, $text = "<sup>?</sup>") {
 	$version = preg_replace('~^(\d\.?\d).*~s', '\1', $server_info); // two most significant digits
 	$urls = array(
 		'sql' => "https://dev.mysql.com/doc/refman/$version/en/",
-		'sqlite' => "https://www.sqlite.org/",
-		'pgsql' => "https://www.postgresql.org/docs/$version/",
-		'mssql' => "https://msdn.microsoft.com/library/",
-		'oracle' => "https://www.oracle.com/pls/topic/lookup?ctx=db" . preg_replace('~^.* (\d+)\.(\d+)\.\d+\.\d+\.\d+.*~s', '\1\2', $server_info) . "&id=",
 	);
 	if (preg_match('~MariaDB~', $server_info)) {
 		$urls['sql'] = "https://mariadb.com/kb/en/library/";

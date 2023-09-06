@@ -275,7 +275,7 @@ function generate_linksbar($links) {
 	$linksbar = "<p class='links'>";
 	foreach ($links as $key => $link) {
 		if ($key !== key(array_keys($links))) {
-			$linksbar .= "<span class='separator'>|</span>";
+			$linksbar .= "";
 		}
 		$linksbar .= $link;
 	}
@@ -1374,11 +1374,11 @@ function slow_query($query) {
 	if (!$slow_query && support("kill") && is_object($connection2 = connect()) && ($db == "" || $connection2->select_db($db))) {
 		$kill = $connection2->result(connection_id()); // MySQL and MySQLi can use thread_id but it's not in PDO_MySQL
 		?>
-<script<?php echo nonce(); ?>>
+<script<?=nonce() ?>>
 var timeout = setTimeout(function () {
-	ajax('<?php echo js_escape(ME); ?>script=kill', function () {
-	}, 'kill=<?php echo $kill; ?>&token=<?php echo $token; ?>');
-}, <?php echo 1000 * $timeout; ?>);
+	ajax('<?=js_escape(ME) ?>script=kill', function () {
+	}, 'kill=<?=$kill; ?>&token=<?=$token ?>');
+}, <?=1000 * $timeout ?>);
 </script>
 <?php
 	} else {
@@ -1554,9 +1554,9 @@ function edit_form($table, $fields, $row, $update) {
 		hidden_fields(array("check" => (array) $_POST["check"], "clone" => $_POST["clone"], "all" => $_POST["all"]));
 	}
 	?>
-<input type="hidden" name="referer" value="<?php echo h(isset($_POST["referer"]) ? $_POST["referer"] : $_SERVER["HTTP_REFERER"]); ?>">
+<input type="hidden" name="referer" value="<?=h(isset($_POST["referer"]) ? $_POST["referer"] : $_SERVER["HTTP_REFERER"]) ?>">
 <input type="hidden" name="save" value="1">
-<input type="hidden" name="token" value="<?php echo $token; ?>">
+<input type="hidden" name="token" value="<?=$token ?>">
 </form>
 <?php
 }

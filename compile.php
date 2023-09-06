@@ -416,7 +416,7 @@ if ($driver) {
 		}
 	}
 	if (count($drivers) == 1) {
-		$file = str_replace('<?php echo html_select("auth[driver]", $drivers, DRIVER) . "\n"; ?>', "<input type='hidden' name='auth[driver]' value='" . ($driver == "mysql" ? "server" : $driver) . "'>" . reset($drivers), $file);
+		$file = str_replace('<?=html_select("auth[driver]", $drivers, DRIVER) . "\n" ?>', "<input type='hidden' name='auth[driver]' value='" . ($driver == "mysql" ? "server" : $driver) . "'>" . reset($drivers), $file);
 	}
 	$file = preg_replace('(;../externals/jush/modules/jush-(?!textarea\.|txt\.|js\.|' . preg_quote($driver == "mysql" ? "sql" : $driver) . '\.)[^.]+.js)', '', $file);
 	$file = preg_replace_callback('~doc_link\(array\((.*)\)\)~sU', function ($match) use ($driver) {
@@ -437,14 +437,14 @@ if ($_SESSION["lang"]) {
 	// single language version
 	$file = preg_replace_callback("~(<\\?php\\s*echo )?lang\\('((?:[^\\\\']+|\\\\.)*)'([,)])(;\\s*\\?>)?~s", 'remove_lang', $file);
 	$file = str_replace("<?php switch_lang(); ?>\n", "", $file);
-	$file = str_replace('<?php echo $LANG; ?>', $_SESSION["lang"], $file);
+	$file = str_replace('<?=$LANG ?>', $_SESSION["lang"], $file);
 }
-$file = str_replace('<?php echo script_src("static/editing.js"); ?>' . "\n", "", $file);
+$file = str_replace('<?=script_src("static/editing.js") ?>' . "\n", "", $file);
 $file = preg_replace('~\s+echo script_src\("\.\./externals/jush/modules/jush-(textarea|txt|js|\$jush)\.js"\);~', '', $file);
 $file = str_replace('<link rel="stylesheet" type="text/css" href="../externals/jush/jush.css">' . "\n", "", $file);
 $file = preg_replace_callback("~compile_file\\('([^']+)'(?:, '([^']*)')?\\)~", 'compile_file', $file); // integrate static files
 $replace = 'preg_replace("~\\\\\\\\?.*~", "", ME) . "?file=\1&version=' . $VERSION . '"';
-$file = preg_replace('~\.\./adminer/static/(default\.css|favicon\.ico)~', '<?php echo h(' . $replace . '); ?>', $file);
+$file = preg_replace('~\.\./adminer/static/(default\.css|favicon\.ico)~', '<?=h(' . $replace . ') ?>', $file);
 $file = preg_replace('~"\.\./adminer/static/(functions\.js)"~', $replace, $file);
 $file = preg_replace('~\.\./adminer/static/([^\'"]*)~', '" . h(' . $replace . ') . "', $file);
 $file = preg_replace('~"\.\./externals/jush/modules/(jush\.js)"~', $replace, $file);

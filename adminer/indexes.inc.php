@@ -97,10 +97,10 @@ if (!$row) {
 <div class="scrollable">
 <table cellspacing="0" class="nowrap">
 <thead><tr>
-<th id="label-type"><?php echo lang('Index Type'); ?>
-<th><input type="submit" class="wayoff"><?php echo lang('Column (length)'); ?>
-<th id="label-name"><?php echo lang('Name'); ?>
-<th><noscript><?php echo "<input type='image' class='icon' name='add[0]' src='../adminer/static/plus.gif' alt='+' title='" . lang('Add next') . "'>"; ?></noscript>
+<th id="label-type"><?=lang('Index Type') ?>
+<th><input type="submit" class="wayoff"><?=lang('Column (length)') ?>
+<th id="label-name"><?=lang('Name') ?>
+<th><noscript><?="<input type='image' class='icon' name='add[0]' src='../adminer/static/plus.gif' alt='+' title='" . lang('Add next') . "'>" ?></noscript>
 </thead>
 <?php
 if ($primary) {
@@ -141,6 +141,6 @@ foreach ($row["indexes"] as $index) {
 </table>
 </div>
 <p>
-<input type="submit" value="<?php echo lang('Save'); ?>">
-<input type="hidden" name="token" value="<?php echo $token; ?>">
+<input type="submit" value="<?=lang('Save') ?>">
+<input type="hidden" name="token" value="<?=$token ?>">
 </form>
