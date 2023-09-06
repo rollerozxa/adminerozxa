@@ -12,9 +12,9 @@ if (extension_loaded('pdo')) {
 			}
 		}
 
-		function dsn($dsn, $username, $password, $options = array()) {
+		function dsn($dsn, $username, $password, $options = []) {
 			$options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
-			$options[PDO::ATTR_STATEMENT_CLASS] = array('Min_PDOStatement');
+			$options[PDO::ATTR_STATEMENT_CLASS] = ['Min_PDOStatement'];
 			try {
 				$this->pdo = new PDO($dsn, $username, $password, $options);
 			} catch (Exception $ex) {
@@ -35,7 +35,7 @@ if (extension_loaded('pdo')) {
 			if (!$result) {
 				list(, $this->errno, $this->error) = $this->pdo->errorInfo();
 				if (!$this->error) {
-					$this->error = lang('Unknown error.');
+					$this->error = 'Unknown error.';
 				}
 				return false;
 			}

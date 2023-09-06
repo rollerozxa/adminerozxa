@@ -6,7 +6,7 @@
 * @param string used after colon in title and heading, should be HTML escaped
 * @return null
 */
-function page_header($title, $error = "", $breadcrumb = array(), $title2 = "") {
+function page_header($title, $error = "", $breadcrumb = [], $title2 = "") {
 	global $LANG, $VERSION, $adminer, $drivers, $jush;
 	page_headers();
 	if (is_ajax() && $error) {
@@ -17,7 +17,7 @@ function page_header($title, $error = "", $breadcrumb = array(), $title2 = "") {
 	$title_page = strip_tags($title_all . (SERVER != "" && SERVER != "localhost" ? h(" - " . SERVER) : "") . " - " . $adminer->name());
 	?>
 <!DOCTYPE html>
-<html lang="<?=$LANG; ?>" dir="<?=lang('ltr') ?>">
+<html lang="<?=$LANG; ?>" dir="ltr">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="robots" content="noindex">
 <title><?=$title_page ?></title>
@@ -32,7 +32,7 @@ function page_header($title, $error = "", $breadcrumb = array(), $title2 = "") {
 <?php } ?>
 <?php } ?>
 
-<body class="<?=lang('ltr') ?> nojs">
+<body class="ltr nojs">
 <script<?=nonce() ?>>
 document.body.className = document.body.className.replace(/ nojs/, ' js');
 var offlineMessage = '<?=js_escape(lang('You are offline.')) ?>';
@@ -95,7 +95,7 @@ function page_headers() {
 	header("X-Content-Type-Options: nosniff");
 	header("Referrer-Policy: origin-when-cross-origin");
 	foreach ($adminer->csp() as $csp) {
-		$header = array();
+		$header = [];
 		foreach ($csp as $key => $val) {
 			$header[] = "$key $val";
 		}
@@ -108,16 +108,16 @@ function page_headers() {
 * @return array of arrays with directive name in key, allowed sources in value
 */
 function csp() {
-	return array(
-		array(
+	return [
+		[
 			"script-src" => "'self' 'unsafe-inline' 'nonce-" . get_nonce() . "' 'strict-dynamic'", // 'self' is a fallback for browsers not supporting 'strict-dynamic', 'unsafe-inline' is a fallback for browsers not supporting 'nonce-'
 			"connect-src" => "'self'",
 			"frame-src" => "https://www.adminer.org",
 			"object-src" => "'none'",
 			"base-uri" => "'none'",
 			"form-action" => "'self'",
-		),
-	);
+		],
+	];
 }
 
 /** Get a CSP nonce
@@ -156,11 +156,10 @@ function page_footer($missing = "") {
 	?>
 </div>
 
-<?php switch_lang(); ?>
 <?php if ($missing != "auth") { ?>
 <form action="" method="post">
 <p class="logout">
-<input type="submit" name="logout" value="<?=lang('Logout') ?>" id="logout">
+<input type="submit" name="logout" value="Logout" id="logout">
 <input type="hidden" name="token" value="<?=$token ?>">
 </p>
 </form>

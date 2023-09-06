@@ -18,7 +18,7 @@ if ($_POST && !$error) {
 	}
 }
 
-page_header($_GET["ns"] != "" ? lang('Alter schema') : lang('Create schema'), $error);
+page_header($_GET["ns"] != "" ? 'Alter schema') : lang('Create schema', $error);
 
 if (!$row) {
 	$row["name"] = $_GET["ns"];
@@ -28,7 +28,7 @@ if (!$row) {
 <form action="" method="post">
 <p><input name="name" id="name" value="<?=h($row["name"]) ?>" autocapitalize="off">
 <?=script("focus(qs('#name'));") ?>
-<input type="submit" value="<?=lang('Save') ?>">
+<input type="submit" value="Save">
 <?php
 if ($_GET["ns"] != "") {
 	echo "<input type='submit' name='drop' value='" . lang('Drop') . "'>" . confirm(lang('Drop %s?', $_GET["ns"])) . "\n";

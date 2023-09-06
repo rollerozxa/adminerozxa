@@ -6,14 +6,14 @@
 * @param int
 * @return array $orgtables
 */
-function select($result, $connection2 = null, $orgtables = array(), $limit = 0) {
+function select($result, $connection2 = null, $orgtables = [], $limit = 0) {
 	global $jush;
-	$links = array(); // colno => orgtable - create links from these columns
-	$indexes = array(); // orgtable => array(column => colno) - primary keys
-	$columns = array(); // orgtable => array(column => ) - not selected columns in primary key
-	$blobs = array(); // colno => bool - display bytes for blobs
-	$types = array(); // colno => type - display char in <code>
-	$return = array(); // table => orgtable - mapping to use in EXPLAIN
+	$links = []; // colno => orgtable - create links from these columns
+	$indexes = []; // orgtable => array(column => colno) - primary keys
+	$columns = []; // orgtable => array(column => ) - not selected columns in primary key
+	$blobs = []; // colno => bool - display bytes for blobs
+	$types = []; // colno => type - display char in <code>
+	$return = []; // table => orgtable - mapping to use in EXPLAIN
 	odd(''); // reset odd for each result
 	for ($i=0; (!$limit || $i < $limit) && ($row = $result->fetch_row()); $i++) {
 		if (!$i) {
@@ -31,7 +31,7 @@ function select($result, $connection2 = null, $orgtables = array(), $limit = 0) 
 				} elseif ($orgtable != "") {
 					if (!isset($indexes[$orgtable])) {
 						// find primary key in each table
-						$indexes[$orgtable] = array();
+						$indexes[$orgtable] = [];
 						foreach (indexes($orgtable, $connection2) as $index) {
 							if ($index["type"] == "PRIMARY") {
 								$indexes[$orgtable] = array_flip($index["columns"]);
@@ -51,10 +51,10 @@ function select($result, $connection2 = null, $orgtables = array(), $limit = 0) 
 				}
 				$types[$j] = $field->type;
 				echo "<th" . ($orgtable != "" || $field->name != $orgname ? " title='" . h(($orgtable != "" ? "$orgtable." : "") . $orgname) . "'" : "") . ">" . h($name)
-					. ($orgtables ? doc_link(array(
+					. ($orgtables ? doc_link([
 						'sql' => "explain-output.html#explain_" . strtolower($name),
 						'mariadb' => "explain/#the-columns-in-explain-select",
-					)) : "")
+					]) : "")
 				;
 			}
 			echo "</thead>\n";
@@ -78,7 +78,7 @@ function select($result, $connection2 = null, $orgtables = array(), $limit = 0) 
 			if ($val === null) {
 				$val = "<i>NULL</i>";
 			} elseif ($blobs[$key] && !is_utf8($val)) {
-				$val = "<i>" . lang('%d byte(s)', strlen($val)) . "</i>"; //! link to download
+				$val = "<i>".strlen($val).' byte(s)'."</i>"; //! link to download
 			} else {
 				$val = h($val);
 				if ($types[$key] == 254) { // 254 - char
@@ -100,7 +100,7 @@ function select($result, $connection2 = null, $orgtables = array(), $limit = 0) 
 * @return array ($table_name => $field)
 */
 function referencable_primary($self) {
-	$return = array(); // table_name => field
+	$return = []; // table_name => field
 	foreach (table_status('', true) as $table_name => $table) {
 		if ($table_name != $self && fk_support($table)) {
 			foreach (fields($table_name) as $field) {
@@ -170,7 +170,7 @@ function textarea($name, $value, $rows = 10, $cols = 80) {
 * @param array extra types to prepend
 * @return null
 */
-function edit_type($key, $field, $collations, $foreign_keys = array(), $extra_types = array()) {
+function edit_type($key, $field, $collations, $foreign_keys = [], $extra_types = []) {
 	global $structured_types, $types, $unsigned, $on_actions;
 	$type = $field["type"];
 	?>
@@ -185,7 +185,7 @@ echo optionlist(array_merge($extra_types, $structured_types), $type);
 ?></select><td><input name="<?=h($key); ?>[length]" value="<?=h($field["length"]) ?>" size="3"<?php echo (!$field["length"] && preg_match('~var(char|binary)$~', $type) ? " class='required'" : ""); //! type="number" with enabled JavaScript ?> aria-labelledby="label-length"><td class="options"><?php
 	echo "<select name='" . h($key) . "[collation]'" . (preg_match('~(char|text|enum|set)$~', $type) ? "" : " class='hidden'") . '><option value="">(' . lang('collation') . ')' . optionlist($collations, $field["collation"]) . '</select>';
 	echo ($unsigned ? "<select name='" . h($key) . "[unsigned]'" . (!$type || preg_match(number_type(), $type) ? "" : " class='hidden'") . '><option>' . optionlist($unsigned, $field["unsigned"]) . '</select>' : '');
-	echo (isset($field['on_update']) ? "<select name='" . h($key) . "[on_update]'" . (preg_match('~timestamp|datetime~', $type) ? "" : " class='hidden'") . '>' . optionlist(array("" => "(" . lang('ON UPDATE') . ")", "CURRENT_TIMESTAMP"), (preg_match('~^CURRENT_TIMESTAMP~i', $field["on_update"]) ? "CURRENT_TIMESTAMP" : $field["on_update"])) . '</select>' : '');
+	echo (isset($field['on_update']) ? "<select name='" . h($key) . "[on_update]'" . (preg_match('~timestamp|datetime~', $type) ? "" : " class='hidden'") . '>' . optionlist(["" => "(ON UPDATE)", "CURRENT_TIMESTAMP"], (preg_match('~^CURRENT_TIMESTAMP~i', $field["on_update"]) ? "CURRENT_TIMESTAMP" : $field["on_update"])) . '</select>' : '');
 	echo ($foreign_keys ? "<select name='" . h($key) . "[on_delete]'" . (preg_match("~`~", $type) ? "" : " class='hidden'") . "><option value=''>(" . lang('ON DELETE') . ")" . optionlist(explode("|", $on_actions), $field["on_delete"]) . "</select> " : " "); // space for IE
 }
 
@@ -221,7 +221,7 @@ function process_type($field, $collate = "COLLATE") {
 * @return array array("field", "type", "NULL", "DEFAULT", "ON UPDATE", "COMMENT", "AUTO_INCREMENT")
 */
 function process_field($field, $type_field) {
-	return array(
+	return [
 		idf_escape(trim($field["field"])),
 		process_type($type_field),
 		($field["null"] ? " NULL" : " NOT NULL"), // NULL for timestamp
@@ -229,7 +229,7 @@ function process_field($field, $type_field) {
 		(preg_match('~timestamp|datetime~', $field["type"]) && $field["on_update"] ? " ON UPDATE $field[on_update]" : ""),
 		(support("comment") && $field["comment"] != "" ? " COMMENT " . q($field["comment"]) : ""),
 		($field["auto_increment"] ? auto_increment() : null),
-	);
+	];
 }
 
 /** Get default value clause
@@ -246,12 +246,12 @@ function default_value($field) {
 * @return string class=''
 */
 function type_class($type) {
-	foreach (array(
+	foreach ([
 		'char' => 'text',
 		'date' => 'time|year',
 		'binary' => 'blob',
 		'enum' => 'set',
-	) as $key => $val) {
+	] as $key => $val) {
 		if (preg_match("~$key|$val~", $type)) {
 			return " class='$key'";
 		}
@@ -265,7 +265,7 @@ function type_class($type) {
 * @param array returned by referencable_primary()
 * @return null
 */
-function edit_fields($fields, $collations, $type = "TABLE", $foreign_keys = array()) {
+function edit_fields($fields, $collations, $type = "TABLE", $foreign_keys = []) {
 	global $inout;
 	$fields = array_values($fields);
 	$default_class = (($_POST ? $_POST["defaults"] : adminer_setting("defaults")) ? "" : " class='hidden'");
@@ -274,19 +274,17 @@ function edit_fields($fields, $collations, $type = "TABLE", $foreign_keys = arra
 <thead><tr>
 <?php if ($type == "PROCEDURE") { ?><td><?php } ?>
 <th id="label-name"><?=($type == "TABLE" ? lang('Column name') : lang('Parameter name')) ?>
-<td id="label-type"><?=lang('Type'); ?><textarea id="enum-edit" rows="4" cols="12" wrap="off" style="display: none;"></textarea><?=script("qs('#enum-edit').onblur = editingLengthBlur;") ?>
-<td id="label-length"><?=lang('Length') ?>
-<td><?=lang('Options'); /* no label required, options have their own label */ ?>
+<td id="label-type">Type<textarea id="enum-edit" rows="4" cols="12" wrap="off" style="display: none;"></textarea><?=script("qs('#enum-edit').onblur = editingLengthBlur;") ?>
+<td id="label-length">Length
+<td>Options
 <?php if ($type == "TABLE") { ?>
 <td id="label-null">NULL
-<td><input type="radio" name="auto_increment_col" value=""><acronym id="label-ai" title="<?=lang('Auto Increment') ?>">AI</acronym><?php echo doc_link(array(
+<td><input type="radio" name="auto_increment_col" value=""><acronym id="label-ai" title="Auto Increment">AI</acronym><?php echo doc_link([
 	'sql' => "example-auto-increment.html",
 	'mariadb' => "auto_increment/",
 	'sqlite' => "autoinc.html",
-	'pgsql' => "datatype.html#DATATYPE-SERIAL",
-	'mssql' => "ms186775.aspx",
-)); ?>
-<td id="label-default"<?=$default_class; ?>><?=lang('Default value') ?>
+]); ?>
+<td id="label-default"<?=$default_class; ?>>Default value
 <?=(support("comment") ? "<td id='label-comment'$comment_class>" . lang('Comment') : "") ?>
 <?php } ?>
 <td><?="<input type='image' class='icon' name='add[" . (support("move_col") ? 0 : count($fields)) . "]' src='../adminer/static/plus.gif' alt='+' title='" . lang('Add next') . "'>" . script("row_count = " . count($fields) . ";") ?>
@@ -330,7 +328,7 @@ function process_fields(&$fields) {
 		foreach ($fields as $key => $field) {
 			if (key($_POST["up"]) == $key) {
 				unset($fields[$key]);
-				array_splice($fields, $last, 0, array($field));
+				array_splice($fields, $last, 0, [$field]);
 				break;
 			}
 			if (isset($field["field"])) {
@@ -343,7 +341,7 @@ function process_fields(&$fields) {
 		foreach ($fields as $key => $field) {
 			if (isset($field["field"]) && $found) {
 				unset($fields[key($_POST["down"])]);
-				array_splice($fields, $offset, 0, array($found));
+				array_splice($fields, $offset, 0, [$found]);
 				break;
 			}
 			if (key($_POST["down"]) == $key) {
@@ -353,7 +351,7 @@ function process_fields(&$fields) {
 		}
 	} elseif ($_POST["add"]) {
 		$fields = array_values($fields);
-		array_splice($fields, key($_POST["add"]), 0, array(array()));
+		array_splice($fields, key($_POST["add"]), 0, [[]]);
 	} elseif (!$_POST["drop_col"]) {
 		return false;
 	}
@@ -379,7 +377,7 @@ function grant($grant, $privileges, $columns, $on) {
 	if (!$privileges) {
 		return true;
 	}
-	if ($privileges == array("ALL PRIVILEGES", "GRANT OPTION")) {
+	if ($privileges == ["ALL PRIVILEGES", "GRANT OPTION"]) {
 		// can't be granted or revoked together
 		return ($grant == "GRANT"
 			? queries("$grant ALL PRIVILEGES$on WITH GRANT OPTION")
@@ -446,7 +444,7 @@ function create_trigger($on, $row) {
 */
 function create_routine($routine, $row) {
 	global $inout, $jush;
-	$set = array();
+	$set = [];
 	$fields = (array) $row["fields"];
 	ksort($fields); // enforce fields order
 	foreach ($fields as $field) {
@@ -490,24 +488,6 @@ function format_foreign_key($foreign_key) {
 	;
 }
 
-/** Add a file to TAR
-* @param string
-* @param TmpFile
-* @return null prints the output
-*/
-function tar_file($filename, $tmp_file) {
-	$return = pack("a100a8a8a8a12a12", $filename, 644, 0, 0, decoct($tmp_file->size), decoct(time()));
-	$checksum = 8*32; // space for checksum itself
-	for ($i=0; $i < strlen($return); $i++) {
-		$checksum += ord($return[$i]);
-	}
-	$return .= sprintf("%06o", $checksum) . "\0 ";
-	echo $return;
-	echo str_repeat("\0", 512 - strlen($return));
-	$tmp_file->send();
-	echo str_repeat("\0", 511 - ($tmp_file->size + 511) % 512);
-}
-
 /** Get INI bytes value
 * @param string
 * @return int
@@ -531,9 +511,9 @@ function doc_link($paths, $text = "<sup>?</sup>") {
 	global $jush, $connection;
 	$server_info = $connection->server_info;
 	$version = preg_replace('~^(\d\.?\d).*~s', '\1', $server_info); // two most significant digits
-	$urls = array(
+	$urls = [
 		'sql' => "https://dev.mysql.com/doc/refman/$version/en/",
-	);
+	];
 	if (preg_match('~MariaDB~', $server_info)) {
 		$urls['sql'] = "https://mariadb.com/kb/en/library/";
 		$paths['sql'] = (isset($paths['mariadb']) ? $paths['mariadb'] : str_replace(".html", "/", $paths['sql']));

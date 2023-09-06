@@ -3,7 +3,7 @@ $TABLE = $_GET["dump"];
 
 if ($_POST && !$error) {
 	$cookie = "";
-	foreach (array("output", "format", "db_style", "routines", "events", "table_style", "auto_increment", "triggers", "data_style") as $key) {
+	foreach (["output", "format", "db_style", "routines", "events", "table_style", "auto_increment", "triggers", "data_style"] as $key) {
 		$cookie .= "&$key=" . urlencode($_POST[$key]);
 	}
 	cookie("adminer_export", substr($cookie, 1));
@@ -28,7 +28,7 @@ SET foreign_key_checks = 0;
 	}
 
 	$style = $_POST["db_style"];
-	$databases = array(DB);
+	$databases = [DB];
 	if (DB == "") {
 		$databases = $_POST["databases"];
 		if (is_string($databases)) {
@@ -53,7 +53,7 @@ SET foreign_key_checks = 0;
 				$out = "";
 
 				if ($_POST["routines"]) {
-					foreach (array("FUNCTION", "PROCEDURE") as $routine) {
+					foreach (["FUNCTION", "PROCEDURE"] as $routine) {
 						foreach (get_rows("SHOW $routine STATUS WHERE Db = " . q($db), null, "-- ") as $row) {
 							$create = remove_definer($connection->result("SHOW CREATE $routine " . idf_escape($row["Name"]), 2));
 							set_utf8mb4($create);
@@ -76,16 +76,11 @@ SET foreign_key_checks = 0;
 			}
 
 			if ($_POST["table_style"] || $_POST["data_style"]) {
-				$views = array();
+				$views = [];
 				foreach (table_status('', true) as $name => $table_status) {
 					$table = (DB == "" || in_array($name, (array) $_POST["tables"]));
 					$data = (DB == "" || in_array($name, (array) $_POST["data"]));
 					if ($table || $data) {
-						if ($ext == "tar") {
-							$tmp_file = new TmpFile;
-							ob_start(array($tmp_file, 'write'), 1e5);
-						}
-
 						$adminer->dumpTable($name, ($table ? $_POST["table_style"] : ""), (is_view($table_status) ? 2 : 0));
 						if (is_view($table_status)) {
 							$views[] = $name;
@@ -97,12 +92,7 @@ SET foreign_key_checks = 0;
 							echo "\nDELIMITER ;;\n$triggers\nDELIMITER ;\n";
 						}
 
-						if ($ext == "tar") {
-							ob_end_flush();
-							tar_file((DB != "" ? "" : "$db/") . "$name.csv", $tmp_file);
-						} elseif ($is_sql) {
-							echo "\n";
-						}
+						echo "\n";
 					}
 				}
 
@@ -119,10 +109,6 @@ SET foreign_key_checks = 0;
 				foreach ($views as $view) {
 					$adminer->dumpTable($view, $_POST["table_style"], 1);
 				}
-
-				if ($ext == "tar") {
-					echo pack("x512");
-				}
 			}
 		}
 	}
@@ -133,21 +119,21 @@ SET foreign_key_checks = 0;
 	exit;
 }
 
-page_header(lang('Export'), $error, ($_GET["export"] != "" ? array("table" => $_GET["export"]) : array()), h(DB));
+page_header('Export', $error, ($_GET["export"] != "" ? ["table" => $_GET["export"]] : []), h(DB));
 ?>
 
 <form action="" method="post">
 <table cellspacing="0" class="layout">
 <?php
-$db_style = array('', 'USE', 'DROP+CREATE', 'CREATE');
-$table_style = array('', 'DROP+CREATE', 'CREATE');
-$data_style = array('', 'TRUNCATE+INSERT', 'INSERT');
+$db_style = ['', 'USE', 'DROP+CREATE', 'CREATE'];
+$table_style = ['', 'DROP+CREATE', 'CREATE'];
+$data_style = ['', 'TRUNCATE+INSERT', 'INSERT'];
 if ($jush == "sql") { //! use insertUpdate() in all drivers
 	$data_style[] = 'INSERT+UPDATE';
 }
 parse_str($_COOKIE["adminer_export"], $row);
 if (!$row) {
-	$row = array("output" => "text", "format" => "sql", "db_style" => (DB != "" ? "" : "CREATE"), "table_style" => "DROP+CREATE", "data_style" => "INSERT");
+	$row = ["output" => "text", "format" => "sql", "db_style" => (DB != "" ? "" : "CREATE"), "table_style" => "DROP+CREATE", "data_style" => "INSERT"];
 }
 if (!isset($row["events"])) { // backwards compatibility
 	$row["routines"] = $row["events"] = ($_GET["dump"] == "");
@@ -171,13 +157,13 @@ echo "<tr><th>" . lang('Tables') . "<td>" . html_select('table_style', $table_st
 echo "<tr><th>" . lang('Data') . "<td>" . html_select('data_style', $data_style, $row["data_style"]);
 ?>
 </table>
-<p><input type="submit" value="<?=lang('Export') ?>">
+<p><input type="submit" value="Export">
 <input type="hidden" name="token" value="<?=$token ?>">
 
 <table cellspacing="0">
 <?php
 echo script("qsl('table').onclick = dumpClick;");
-$prefixes = array();
+$prefixes = [];
 if (DB != "") {
 	$checked = ($TABLE != "" ? "" : " checked");
 	echo "<thead><tr>";

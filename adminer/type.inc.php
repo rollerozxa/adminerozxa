@@ -11,7 +11,7 @@ if ($_POST && !$error) {
 	}
 }
 
-page_header($TYPE != "" ? lang('Alter type') . ": " . h($TYPE) : lang('Create type'), $error);
+page_header($TYPE != "" ? 'Alter type') . ": " . h($TYPE) : lang('Create type', $error);
 
 if (!$row) {
 	$row["as"] = "AS ";

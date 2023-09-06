@@ -8,7 +8,6 @@
 */
 
 include "./include/bootstrap.inc.php";
-include "./include/tmpfile.inc.php";
 
 $enum_length = "'(?:''|[^'\\\\]|\\\\.)*'";
 $inout = "IN|OUT|INOUT";

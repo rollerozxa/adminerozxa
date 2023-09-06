@@ -25,7 +25,7 @@ class AdminerImportFromDir {
 	}
 
 	protected function _readFiles($gz = false) {
-		$mapped = array();
+		$mapped = [];
 		$glob = "$this->dir*.[Ss][Qq][Ll]";
 		if ($gz) {
 			$suffix = '.gz'; # lowercase only because of core
@@ -63,7 +63,7 @@ class AdminerImportFromDir {
 		if ($posted !== null || !isset($_POST['webfile'])) {
 			# use existing translation strings
 			echo "<fieldset><legend>" . lang('From server') . "</legend><div>";
-			echo lang('Webserver file %s', '<select name="webfilename">' . optionlist(array('' => lang('Select')) + $files, $posted, true) . '</select>');
+			echo 'Webserver file <select name="webfilename">' . optionlist(['' => lang('Select')] + $files, $posted, true) . '</select>';
 			echo ' <input type="submit" name="webfile" value="' . lang('Run file') . '">';
 			echo "</div></fieldset>\n";
 			$posted = null;

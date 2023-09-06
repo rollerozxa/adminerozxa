@@ -11,12 +11,12 @@ if ($_POST && !process_fields($row["fields"]) && !$error) {
 		"DROP $routine " . routine_id($PROCEDURE, $orig),
 		create_routine($routine, $row),
 		"DROP $routine " . routine_id($row["name"], $row),
-		create_routine($routine, array("name" => $temp_name) + $row),
+		create_routine($routine, ["name" => $temp_name] + $row),
 		"DROP $routine " . routine_id($temp_name, $row),
 		substr(ME, 0, -1),
-		lang('Routine has been dropped.'),
-		lang('Routine has been altered.'),
-		lang('Routine has been created.'),
+		'Routine has been dropped.',
+		'Routine has been altered.',
+		'Routine has been created.',
 		$PROCEDURE,
 		$row["name"]
 	);
@@ -35,16 +35,16 @@ $routine_languages = routine_languages();
 ?>
 
 <form action="" method="post" id="form">
-<p><?=lang('Name'); ?>: <input name="name" value="<?=h($row["name"]) ?>" data-maxlength="64" autocapitalize="off">
+<p>Name: <input name="name" value="<?=h($row["name"]) ?>" data-maxlength="64" autocapitalize="off">
 <?=($routine_languages ? lang('Language') . ": " . html_select("language", $routine_languages, $row["language"]) . "\n" : "") ?>
-<input type="submit" value="<?=lang('Save') ?>">
+<input type="submit" value="Save">
 <div class="scrollable">
 <table cellspacing="0" class="nowrap">
 <?php
 edit_fields($row["fields"], $collations, $routine);
 if (isset($_GET["function"])) {
-	echo "<tr><td>" . lang('Return type');
-	edit_type("returns", $row["returns"], $collations, array(), ($jush == "pgsql" ? array("void", "trigger") : array()));
+	echo "<tr><td>" . 'Return type';
+	edit_type("returns", $row["returns"], $collations, [], ($jush == "pgsql" ? ["void", "trigger"] : []));
 }
 ?>
 </table>
@@ -52,7 +52,7 @@ if (isset($_GET["function"])) {
 </div>
 <p><?php textarea("definition", $row["definition"]); ?>
 <p>
-<input type="submit" value="<?=lang('Save') ?>">
-<?php if ($PROCEDURE != "") { ?><input type="submit" name="drop" value="<?=lang('Drop'); ?>"><?=confirm(lang('Drop %s?', $PROCEDURE)) ?><?php } ?>
+<input type="submit" value="Save">
+<?php if ($PROCEDURE != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(lang('Drop %s?', $PROCEDURE)) ?><?php } ?>
 <input type="hidden" name="token" value="<?=$token ?>">
 </form>

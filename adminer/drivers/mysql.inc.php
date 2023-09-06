@@ -1,5 +1,5 @@
 <?php
-$drivers = array("server" => "MySQL") + $drivers;
+$drivers = ["server" => "MySQL"] + $drivers;
 
 if (!defined("DRIVER")) {
 	define("DRIVER", "server"); // server - backwards compatibility
@@ -62,7 +62,7 @@ if (!defined("DRIVER")) {
 
 			function connect($server, $username, $password) {
 				global $adminer;
-				$options = array(PDO::MYSQL_ATTR_LOCAL_INFILE => false);
+				$options = [PDO::MYSQL_ATTR_LOCAL_INFILE => false];
 				$ssl = $adminer->connectSsl();
 				if ($ssl) {
 					if (!empty($ssl['key'])) {
@@ -112,12 +112,12 @@ if (!defined("DRIVER")) {
 		function insertUpdate($table, $rows, $primary) {
 			$columns = array_keys(reset($rows));
 			$prefix = "INSERT INTO " . table($table) . " (" . implode(", ", $columns) . ") VALUES\n";
-			$values = array();
+			$values = [];
 			foreach ($columns as $key) {
 				$values[$key] = "$key = VALUES($key)";
 			}
 			$suffix = "\nON DUPLICATE KEY UPDATE " . implode(", ", $values);
-			$values = array();
+			$values = [];
 			$length = 0;
 			foreach ($rows as $set) {
 				$value = "(" . implode(", ", $set) . ")";
@@ -125,7 +125,7 @@ if (!defined("DRIVER")) {
 					if (!queries($prefix . implode(",\n", $values) . $suffix)) {
 						return false;
 					}
-					$values = array();
+					$values = [];
 					$length = 0;
 				}
 				$values[] = $value;
@@ -278,7 +278,7 @@ if (!defined("DRIVER")) {
 	* @return array
 	*/
 	function engines() {
-		$return = array();
+		$return = [];
 		foreach (get_rows("SHOW ENGINES") as $row) {
 			if (preg_match("~YES|DEFAULT~", $row["Support"])) {
 				$return[] = $row["Engine"];
@@ -310,7 +310,7 @@ if (!defined("DRIVER")) {
 	* @return array array($db => $tables)
 	*/
 	function count_tables($databases) {
-		$return = array();
+		$return = [];
 		foreach ($databases as $db) {
 			$return[$db] = count(get_vals("SHOW TABLES IN " . idf_escape($db)));
 		}
@@ -323,7 +323,7 @@ if (!defined("DRIVER")) {
 	* @return array array($name => array("Name" => , "Engine" => , "Comment" => , "Oid" => , "Rows" => , "Collation" => , "Auto_increment" => , "Data_length" => , "Index_length" => , "Data_free" => )) or only inner array with $name
 	*/
 	function table_status($name = "", $fast = false) {
-		$return = array();
+		$return = [];
 		foreach (get_rows($fast && min_version(5)
 			? "SELECT TABLE_NAME AS Name, ENGINE AS Engine, TABLE_COMMENT AS Comment FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() " . ($name != "" ? "AND TABLE_NAME = " . q($name) : "ORDER BY Name")
 			: "SHOW TABLE STATUS" . ($name != "" ? " LIKE " . q(addcslashes($name, "%_\\")) : "")
@@ -365,10 +365,10 @@ if (!defined("DRIVER")) {
 	* @return array array($name => array("field" => , "full_type" => , "type" => , "length" => , "unsigned" => , "default" => , "null" => , "auto_increment" => , "on_update" => , "collation" => , "privileges" => , "comment" => , "primary" => ))
 	*/
 	function fields($table) {
-		$return = array();
+		$return = [];
 		foreach (get_rows("SHOW FULL COLUMNS FROM " . table($table)) as $row) {
 			preg_match('~^([^( ]+)(?:\((.+)\))?( unsigned)?( zerofill)?$~', $row["Type"], $match);
-			$return[$row["Field"]] = array(
+			$return[$row["Field"]] = [
 				"field" => $row["Field"],
 				"full_type" => $row["Type"],
 				"type" => $match[1],
@@ -384,7 +384,7 @@ if (!defined("DRIVER")) {
 				"primary" => ($row["Key"] == "PRI"),
 				// https://mariadb.com/kb/en/library/show-columns/, https://github.com/vrana/adminer/pull/359#pullrequestreview-276677186
 				"generated" => preg_match('~^(VIRTUAL|PERSISTENT|STORED)~', $row["Extra"]),
-			);
+			];
 		}
 		return $return;
 	}
@@ -395,7 +395,7 @@ if (!defined("DRIVER")) {
 	* @return array array($key_name => array("type" => , "columns" => array(), "lengths" => array(), "descs" => array()))
 	*/
 	function indexes($table, $connection2 = null) {
-		$return = array();
+		$return = [];
 		foreach (get_rows("SHOW INDEX FROM " . table($table), $connection2) as $row) {
 			$name = $row["Key_name"];
 			$return[$name]["type"] = ($name == "PRIMARY" ? "PRIMARY" : ($row["Index_type"] == "FULLTEXT" ? "FULLTEXT" : ($row["Non_unique"] ? ($row["Index_type"] == "SPATIAL" ? "SPATIAL" : "INDEX") : "UNIQUE")));
@@ -413,21 +413,21 @@ if (!defined("DRIVER")) {
 	function foreign_keys($table) {
 		global $connection, $on_actions;
 		static $pattern = '(?:`(?:[^`]|``)+`|"(?:[^"]|"")+")';
-		$return = array();
+		$return = [];
 		$create_table = $connection->result("SHOW CREATE TABLE " . table($table), 1);
 		if ($create_table) {
 			preg_match_all("~CONSTRAINT ($pattern) FOREIGN KEY ?\\(((?:$pattern,? ?)+)\\) REFERENCES ($pattern)(?:\\.($pattern))? \\(((?:$pattern,? ?)+)\\)(?: ON DELETE ($on_actions))?(?: ON UPDATE ($on_actions))?~", $create_table, $matches, PREG_SET_ORDER);
 			foreach ($matches as $match) {
 				preg_match_all("~$pattern~", $match[2], $source);
 				preg_match_all("~$pattern~", $match[5], $target);
-				$return[idf_unescape($match[1])] = array(
+				$return[idf_unescape($match[1])] = [
 					"db" => idf_unescape($match[4] != "" ? $match[3] : $match[4]),
 					"table" => idf_unescape($match[4] != "" ? $match[4] : $match[3]),
 					"source" => array_map('idf_unescape', $source[0]),
 					"target" => array_map('idf_unescape', $target[0]),
 					"on_delete" => ($match[6] ? $match[6] : "RESTRICT"),
 					"on_update" => ($match[7] ? $match[7] : "RESTRICT"),
-				);
+				];
 			}
 		}
 		return $return;
@@ -439,14 +439,14 @@ if (!defined("DRIVER")) {
 	*/
 	function view($name) {
 		global $connection;
-		return array("select" => preg_replace('~^(?:[^`]|`[^`]*`)*\s+AS\s+~isU', '', $connection->result("SHOW CREATE VIEW " . table($name), 1)));
+		return ["select" => preg_replace('~^(?:[^`]|`[^`]*`)*\s+AS\s+~isU', '', $connection->result("SHOW CREATE VIEW " . table($name), 1))];
 	}
 
 	/** Get sorted grouped list of collations
 	* @return array
 	*/
 	function collations() {
-		$return = array();
+		$return = [];
 		foreach (get_rows("SHOW COLLATION") as $row) {
 			if ($row["Default"]) {
 				$return[$row["Charset"]][-1] = $row["Collation"];
@@ -506,8 +506,8 @@ if (!defined("DRIVER")) {
 	function rename_database($name, $collation) {
 		$return = false;
 		if (create_database($name, $collation)) {
-			$tables = array();
-			$views = array();
+			$tables = [];
+			$views = [];
 			foreach (tables_list() as $table => $type) {
 				if ($type == 'VIEW') {
 					$views[] = $table;
@@ -516,7 +516,7 @@ if (!defined("DRIVER")) {
 				}
 			}
 			$return = (!$tables && !$views) || move_tables($tables, $views, $name);
-			drop_databases($return ? array(DB) : array());
+			drop_databases($return ? [DB] : []);
 		}
 		return $return;
 	}
@@ -554,7 +554,7 @@ if (!defined("DRIVER")) {
 	* @return bool
 	*/
 	function alter_table($table, $name, $fields, $foreign, $comment, $engine, $collation, $auto_increment, $partitioning) {
-		$alter = array();
+		$alter = [];
 		foreach ($fields as $field) {
 			$alter[] = ($field[1]
 				? ($table != "" ? ($field[0] != "" ? "CHANGE " . idf_escape($field[0]) : "ADD") : " ") . " " . implode($field[1]) . ($table != "" ? $field[2] : "")
@@ -626,12 +626,12 @@ if (!defined("DRIVER")) {
 	*/
 	function move_tables($tables, $views, $target) {
 		global $connection;
-		$rename = array();
+		$rename = [];
 		foreach ($tables as $table) {
 			$rename[] = table($table) . " TO " . idf_escape($target) . "." . table($table);
 		}
 		if (!$rename || queries("RENAME TABLE " . implode(", ", $rename))) {
-			$definitions = array();
+			$definitions = [];
 			foreach ($views as $table) {
 				$definitions[table($table)] = view($table);
 			}
@@ -688,7 +688,7 @@ if (!defined("DRIVER")) {
 	*/
 	function trigger($name) {
 		if ($name == "") {
-			return array();
+			return [];
 		}
 		$rows = get_rows("SHOW TRIGGERS WHERE `Trigger` = " . q($name));
 		return reset($rows);
@@ -699,9 +699,9 @@ if (!defined("DRIVER")) {
 	* @return array array($name => array($timing, $event))
 	*/
 	function triggers($table) {
-		$return = array();
+		$return = [];
 		foreach (get_rows("SHOW TRIGGERS LIKE " . q(addcslashes($table, "%_\\"))) as $row) {
-			$return[$row["Trigger"]] = array($row["Timing"], $row["Event"]);
+			$return[$row["Trigger"]] = [$row["Timing"], $row["Event"]];
 		}
 		return $return;
 	}
@@ -710,11 +710,11 @@ if (!defined("DRIVER")) {
 	* @return array ("Timing" => array(), "Event" => array(), "Type" => array())
 	*/
 	function trigger_options() {
-		return array(
-			"Timing" => array("BEFORE", "AFTER"),
-			"Event" => array("INSERT", "UPDATE", "DELETE"),
-			"Type" => array("FOR EACH ROW"),
-		);
+		return [
+			"Timing" => ["BEFORE", "AFTER"],
+			"Event" => ["INSERT", "UPDATE", "DELETE"],
+			"Type" => ["FOR EACH ROW"],
+		];
 	}
 
 	/** Get information about stored routine
@@ -724,16 +724,16 @@ if (!defined("DRIVER")) {
 	*/
 	function routine($name, $type) {
 		global $connection, $enum_length, $inout, $types;
-		$aliases = array("bool", "boolean", "integer", "double precision", "real", "dec", "numeric", "fixed", "national char", "national varchar");
+		$aliases = ["bool", "boolean", "integer", "double precision", "real", "dec", "numeric", "fixed", "national char", "national varchar"];
 		$space = "(?:\\s|/\\*[\s\S]*?\\*/|(?:#|-- )[^\n]*\n?|--\r?\n)";
 		$type_pattern = "((" . implode("|", array_merge(array_keys($types), $aliases)) . ")\\b(?:\\s*\\(((?:[^'\")]|$enum_length)++)\\))?\\s*(zerofill\\s*)?(unsigned(?:\\s+zerofill)?)?)(?:\\s*(?:CHARSET|CHARACTER\\s+SET)\\s*['\"]?([^'\"\\s,]+)['\"]?)?";
 		$pattern = "$space*(" . ($type == "FUNCTION" ? "" : $inout) . ")?\\s*(?:`((?:[^`]|``)*)`\\s*|\\b(\\S+)\\s+)$type_pattern";
 		$create = $connection->result("SHOW CREATE $type " . idf_escape($name), 2);
 		preg_match("~\\(((?:$pattern\\s*,?)*)\\)\\s*" . ($type == "FUNCTION" ? "RETURNS\\s+$type_pattern\\s+" : "") . "(.*)~is", $create, $match);
-		$fields = array();
+		$fields = [];
 		preg_match_all("~$pattern\\s*,?~is", $match[1], $matches, PREG_SET_ORDER);
 		foreach ($matches as $param) {
-			$fields[] = array(
+			$fields[] = [
 				"field" => str_replace("``", "`", $param[2]) . $param[3],
 				"type" => strtolower($param[5]),
 				"length" => preg_replace_callback("~$enum_length~s", 'normalize_enum', $param[6]),
@@ -742,17 +742,17 @@ if (!defined("DRIVER")) {
 				"full_type" => $param[4],
 				"inout" => strtoupper($param[1]),
 				"collation" => strtolower($param[9]),
-			);
+			];
 		}
 		if ($type != "FUNCTION") {
-			return array("fields" => $fields, "definition" => $match[11]);
+			return ["fields" => $fields, "definition" => $match[11]];
 		}
-		return array(
+		return [
 			"fields" => $fields,
-			"returns" => array("type" => $match[12], "length" => $match[13], "unsigned" => $match[15], "collation" => $match[16]),
+			"returns" => ["type" => $match[12], "length" => $match[13], "unsigned" => $match[15], "collation" => $match[16]],
 			"definition" => $match[17],
 			"language" => "SQL", // available in information_schema.ROUTINES.PARAMETER_STYLE
-		);
+		];
 	}
 
 	/** Get list of routines
@@ -766,7 +766,7 @@ if (!defined("DRIVER")) {
 	* @return array
 	*/
 	function routine_languages() {
-		return array(); // "SQL" not required
+		return []; // "SQL" not required
 	}
 
 	/** Get routine signature
@@ -808,14 +808,14 @@ if (!defined("DRIVER")) {
 	* @return array
 	*/
 	function types() {
-		return array();
+		return [];
 	}
 
 	/** Get existing schemas
 	* @return array
 	*/
 	function schemas() {
-		return array();
+		return [];
 	}
 
 	/** Get current schema
@@ -968,41 +968,41 @@ if (!defined("DRIVER")) {
 	* @return array array('possible_drivers' => , 'jush' => , 'types' => , 'structured_types' => , 'unsigned' => , 'operators' => , 'functions' => , 'grouping' => , 'edit_functions' => )
 	*/
 	function driver_config() {
-		$types = array(); ///< @var array ($type => $maximum_unsigned_length, ...)
-		$structured_types = array(); ///< @var array ($description => array($type, ...), ...)
-		foreach (array(
-			lang('Numbers') => array("tinyint" => 3, "smallint" => 5, "mediumint" => 8, "int" => 10, "bigint" => 20, "decimal" => 66, "float" => 12, "double" => 21),
-			lang('Date and time') => array("date" => 10, "datetime" => 19, "timestamp" => 19, "time" => 10, "year" => 4),
-			lang('Strings') => array("char" => 255, "varchar" => 65535, "tinytext" => 255, "text" => 65535, "mediumtext" => 16777215, "longtext" => 4294967295),
-			lang('Lists') => array("enum" => 65535, "set" => 64),
-			lang('Binary') => array("bit" => 20, "binary" => 255, "varbinary" => 65535, "tinyblob" => 255, "blob" => 65535, "mediumblob" => 16777215, "longblob" => 4294967295),
-			lang('Geometry') => array("geometry" => 0, "point" => 0, "linestring" => 0, "polygon" => 0, "multipoint" => 0, "multilinestring" => 0, "multipolygon" => 0, "geometrycollection" => 0),
-		) as $key => $val) {
+		$types = []; ///< @var array ($type => $maximum_unsigned_length, ...)
+		$structured_types = []; ///< @var array ($description => array($type, ...), ...)
+		foreach ([
+			lang('Numbers') => ["tinyint" => 3, "smallint" => 5, "mediumint" => 8, "int" => 10, "bigint" => 20, "decimal" => 66, "float" => 12, "double" => 21],
+			lang('Date and time') => ["date" => 10, "datetime" => 19, "timestamp" => 19, "time" => 10, "year" => 4],
+			lang('Strings') => ["char" => 255, "varchar" => 65535, "tinytext" => 255, "text" => 65535, "mediumtext" => 16777215, "longtext" => 4294967295],
+			lang('Lists') => ["enum" => 65535, "set" => 64],
+			lang('Binary') => ["bit" => 20, "binary" => 255, "varbinary" => 65535, "tinyblob" => 255, "blob" => 65535, "mediumblob" => 16777215, "longblob" => 4294967295],
+			lang('Geometry') => ["geometry" => 0, "point" => 0, "linestring" => 0, "polygon" => 0, "multipoint" => 0, "multilinestring" => 0, "multipolygon" => 0, "geometrycollection" => 0],
+		] as $key => $val) {
 			$types += $val;
 			$structured_types[$key] = array_keys($val);
 		}
-		return array(
-			'possible_drivers' => array("MySQLi", "MySQL", "PDO_MySQL"),
+		return [
+			'possible_drivers' => ["MySQLi", "MySQL", "PDO_MySQL"],
 			'jush' => "sql", ///< @var string JUSH identifier
 			'types' => $types,
 			'structured_types' => $structured_types,
-			'unsigned' => array("unsigned", "zerofill", "unsigned zerofill"), ///< @var array number variants
-			'operators' => array("=", "<", ">", "<=", ">=", "!=", "LIKE", "LIKE %%", "REGEXP", "IN", "FIND_IN_SET", "IS NULL", "NOT LIKE", "NOT REGEXP", "NOT IN", "IS NOT NULL", "SQL"), ///< @var array operators used in select
-			'functions' => array("char_length", "date", "distinct", "from_unixtime", "unix_timestamp", "lower", "round", "floor", "ceil", "sec_to_time", "time_to_sec", "upper"), ///< @var array functions used in select
+			'unsigned' => ["unsigned", "zerofill", "unsigned zerofill"], ///< @var array number variants
+			'operators' => ["=", "<", ">", "<=", ">=", "!=", "LIKE", "LIKE %%", "REGEXP", "IN", "FIND_IN_SET", "IS NULL", "NOT LIKE", "NOT REGEXP", "NOT IN", "IS NOT NULL", "SQL"], ///< @var array operators used in select
+			'functions' => ["char_length", "date", "distinct", "from_unixtime", "unix_timestamp", "lower", "round", "floor", "ceil", "sec_to_time", "time_to_sec", "upper"], ///< @var array functions used in select
 			'operator_regexp' => 'REGEXP',
-			'grouping' => array("avg", "count", "count distinct", "group_concat", "max", "min", "sum"), ///< @var array grouping functions used in select
-			'edit_functions' => array( ///< @var array of array("$type|$type2" => "$function/$function2") functions used in editing, [0] - edit and insert, [1] - edit only
-				array(
+			'grouping' => ["avg", "count", "count distinct", "group_concat", "max", "min", "sum"], ///< @var array grouping functions used in select
+			'edit_functions' => [ ///< @var array of array("$type|$type2" => "$function/$function2") functions used in editing, [0] - edit and insert, [1] - edit only
+				[
 					"char" => "md5/sha1/password/encrypt/uuid",
 					"binary" => "md5/sha1",
 					"date|time" => "now",
-				), array(
+				], [
 					number_type() => "+/-",
 					"date" => "+ interval/- interval",
 					"time" => "addtime/subtime",
 					"char|text" => "concat",
-				)
-			),
-		);
+				]
+			],
+		];
 	}
 }

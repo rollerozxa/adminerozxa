@@ -3,8 +3,8 @@ $PROCEDURE = ($_GET["name"] ? $_GET["name"] : $_GET["call"]);
 page_header(lang('Call') . ": " . h($PROCEDURE), $error);
 
 $routine = routine($_GET["call"], (isset($_GET["callf"]) ? "FUNCTION" : "PROCEDURE"));
-$in = array();
-$out = array();
+$in = [];
+$out = [];
 foreach ($routine["fields"] as $i => $field) {
 	if (substr($field["inout"], -3) == "OUT") {
 		$out[$i] = "@" . idf_escape($field["field"]) . " AS " . idf_escape($field["field"]);
@@ -15,7 +15,7 @@ foreach ($routine["fields"] as $i => $field) {
 }
 
 if (!$error && $_POST) {
-	$call = array();
+	$call = [];
 	foreach ($routine["fields"] as $key => $field) {
 		if (in_array($key, $in)) {
 			$val = process_input($field);
@@ -48,7 +48,7 @@ if (!$error && $_POST) {
 			if (is_object($result)) {
 				select($result, $connection2);
 			} else {
-				echo "<p class='message'>" . lang('Routine has been called, %d row(s) affected.', $affected)
+				echo "<p class='message'>" . 'Routine has been called, '.$affected.' row(s) affected.'
 					. " <span class='time'>" . @date("H:i:s") . "</span>\n" // @ - time zone may be not set
 				;
 			}
@@ -85,6 +85,6 @@ if ($in) {
 }
 ?>
 <p>
-<input type="submit" value="<?=lang('Call') ?>">
+<input type="submit" value="Call">
 <input type="hidden" name="token" value="<?=$token ?>">
 </form>

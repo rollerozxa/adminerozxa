@@ -24,12 +24,12 @@ if ($_POST && !$error && !isset($_GET["select"])) {
 	if (isset($_POST["delete"])) {
 		queries_redirect(
 			$location,
-			lang('Item has been deleted.'),
+			'Item has been deleted.',
 			$driver->delete($TABLE, $query_where, !$unique_array)
 		);
 
 	} else {
-		$set = array();
+		$set = [];
 		foreach ($fields as $name => $field) {
 			$val = process_input($field);
 			if ($val !== false && $val !== null) {
@@ -43,7 +43,7 @@ if ($_POST && !$error && !isset($_GET["select"])) {
 			}
 			queries_redirect(
 				$location,
-				lang('Item has been updated.'),
+				'Item has been updated.',
 				$driver->update($TABLE, $set, $query_where, !$unique_array)
 			);
 			if (is_ajax()) {
@@ -63,7 +63,7 @@ $row = null;
 if ($_POST["save"]) {
 	$row = (array) $_POST["fields"];
 } elseif ($where) {
-	$select = array();
+	$select = [];
 	foreach ($fields as $name => $field) {
 		if (isset($field["privileges"]["select"])) {
 			$as = convert_field($field);
@@ -76,12 +76,12 @@ if ($_POST["save"]) {
 			$select[] = ($as ? "$as AS " : "") . idf_escape($name);
 		}
 	}
-	$row = array();
+	$row = [];
 	if (!support("table")) {
-		$select = array("*");
+		$select = ["*"];
 	}
 	if ($select) {
-		$result = $driver->select($TABLE, $select, array($where), $select, array(), (isset($_GET["select"]) ? 2 : 1));
+		$result = $driver->select($TABLE, $select, [$where], $select, [], (isset($_GET["select"]) ? 2 : 1));
 		if (!$result) {
 			$error = error();
 		} else {
@@ -98,10 +98,10 @@ if ($_POST["save"]) {
 
 if (!support("table") && !$fields) {
 	if (!$where) { // insert
-		$result = $driver->select($TABLE, array("*"), $where, array("*"));
+		$result = $driver->select($TABLE, ["*"], $where, ["*"]);
 		$row = ($result ? $result->fetch_assoc() : false);
 		if (!$row) {
-			$row = array($driver->primary => "");
+			$row = [$driver->primary => ""];
 		}
 	}
 	if ($row) {
@@ -109,7 +109,7 @@ if (!support("table") && !$fields) {
 			if (!$where) {
 				$row[$key] = null;
 			}
-			$fields[$key] = array("field" => $key, "null" => ($key != $driver->primary), "auto_increment" => ($key == $driver->primary));
+			$fields[$key] = ["field" => $key, "null" => ($key != $driver->primary), "auto_increment" => ($key == $driver->primary)];
 		}
 	}
 }

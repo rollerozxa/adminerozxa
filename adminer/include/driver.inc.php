@@ -1,5 +1,5 @@
 <?php
-$drivers = array();
+$drivers = [];
 
 /** Add a driver
 * @param string
@@ -41,7 +41,7 @@ function get_driver($id) {
 	* @param bool whether to print the query
 	* @return Min_Result
 	*/
-	function select($table, $select, $where, $group, $order = array(), $limit = 1, $page = 0, $print = false) {
+	function select($table, $select, $where, $group, $order = [], $limit = 1, $page = 0, $print = false) {
 		global $adminer, $jush;
 		$is_group = (count($group) < count($select));
 		$query = $adminer->selectQueryBuild($select, $where, $group, $order, $limit, $page);
@@ -82,7 +82,7 @@ function get_driver($id) {
 	* @return bool
 	*/
 	function update($table, $set, $queryWhere, $limit = 0, $separator = "\n") {
-		$values = array();
+		$values = [];
 		foreach ($set as $key => $val) {
 			$values[] = "$key = $val";
 		}

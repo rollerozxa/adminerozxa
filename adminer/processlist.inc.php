@@ -7,11 +7,11 @@ if (support("kill")) {
 				$killed++;
 			}
 		}
-		queries_redirect(ME . "processlist=", lang('%d process(es) have been killed.', $killed), $killed || !$_POST["kill"]);
+		queries_redirect(ME . "processlist=", $killed.' process(es) have been killed.', $killed || !$_POST["kill"]);
 	}
 }
 
-page_header(lang('Process list'), $error);
+page_header('Process list', $error);
 ?>
 
 <form action="" method="post">
@@ -26,11 +26,11 @@ foreach (process_list() as $i => $row) {
 	if (!$i) {
 		echo "<thead><tr lang='en'>" . (support("kill") ? "<th>" : "");
 		foreach ($row as $key => $val) {
-			echo "<th>$key" . doc_link(array(
+			echo "<th>$key" . doc_link([
 				'sql' => "show-processlist.html#processlist_" . strtolower($key),
 				'pgsql' => "monitoring-stats.html#PG-STAT-ACTIVITY-VIEW",
 				'oracle' => "REFRN30223",
-			));
+			]);
 		}
 		echo "</thead>\n";
 	}

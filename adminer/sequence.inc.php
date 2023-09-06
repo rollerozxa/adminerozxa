@@ -16,7 +16,7 @@ if ($_POST && !$error) {
 	}
 }
 
-page_header($SEQUENCE != "" ? lang('Alter sequence') . ": " . h($SEQUENCE) : lang('Create sequence'), $error);
+page_header($SEQUENCE != "" ? 'Alter sequence') . ": " . h($SEQUENCE) : lang('Create sequence', $error);
 
 if (!$row) {
 	$row["name"] = $SEQUENCE;
@@ -25,7 +25,7 @@ if (!$row) {
 
 <form action="" method="post">
 <p><input name="name" value="<?=h($row["name"]) ?>" autocapitalize="off">
-<input type="submit" value="<?=lang('Save') ?>">
+<input type="submit" value="Save">
 <?php
 if ($SEQUENCE != "") {
 	echo "<input type='submit' name='drop' value='" . lang('Drop') . "'>" . confirm(lang('Drop %s?', $SEQUENCE)) . "\n";

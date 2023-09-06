@@ -11,7 +11,7 @@ include "../adminer/include/coverage.inc.php";
 // disable filter.default
 $filter = !preg_match('~^(unsafe_raw)?$~', ini_get("filter.default"));
 if ($filter || ini_get("filter.default_flags")) {
-	foreach (array('_GET', '_POST', '_COOKIE', '_SERVER') as $val) {
+	foreach (['_GET', '_POST', '_COOKIE', '_SERVER'] as $val) {
 		$unsafe = filter_input_array(constant("INPUT$val"), FILTER_UNSAFE_RAW);
 		if ($unsafe) {
 			$$val = $unsafe;
@@ -33,7 +33,7 @@ if (isset($_GET["file"])) {
 if ($_GET["script"] == "version") {
 	$fp = file_open_lock(get_temp_dir() . "/adminer.version");
 	if ($fp) {
-		file_write_unlock($fp, serialize(array("signature" => $_POST["signature"], "version" => $_POST["version"])));
+		file_write_unlock($fp, serialize(["signature" => $_POST["signature"], "version" => $_POST["version"]]));
 	}
 	exit;
 }
@@ -55,7 +55,7 @@ $HTTPS = ($_SERVER["HTTPS"] && strcasecmp($_SERVER["HTTPS"], "off")) || ini_bool
 if (!defined("SID")) {
 	session_cache_limiter(""); // to allow restarting session
 	session_name("adminer_sid"); // use specific session name to get own namespace
-	$params = array(0, preg_replace('~\?.*~', '', $_SERVER["REQUEST_URI"]), "", $HTTPS);
+	$params = [0, preg_replace('~\?.*~', '', $_SERVER["REQUEST_URI"]), "", $HTTPS];
 	if (version_compare(PHP_VERSION, '5.2.0') >= 0) {
 		$params[] = true; // HttpOnly
 	}
@@ -64,7 +64,7 @@ if (!defined("SID")) {
 }
 
 // disable magic quotes to be able to use database escaping function
-remove_slashes(array(&$_GET, &$_POST, &$_COOKIE), $filter);
+remove_slashes([&$_GET, &$_POST, &$_COOKIE], $filter);
 if (function_exists("get_magic_quotes_runtime") && get_magic_quotes_runtime()) {
 	set_magic_quotes_runtime(false);
 }

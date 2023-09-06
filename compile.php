@@ -21,16 +21,6 @@ function add_quo_slashes($s) {
 	return $return;
 }
 
-function remove_lang($match) {
-	global $translations;
-	$idf = strtr($match[2], array("\\'" => "'", "\\\\" => "\\"));
-	$s = ($translations[$idf] ? $translations[$idf] : $idf);
-	if ($match[3] == ",") { // lang() has parameters
-		return $match[1] . (is_array($s) ? "lang(array('" . implode("', '", array_map('add_apo_slashes', $s)) . "')," : "sprintf('" . add_apo_slashes($s) . "',");
-	}
-	return ($match[1] && $match[4] ? $s : "$match[1]'" . add_apo_slashes($s) . "'$match[4]");
-}
-
 function lang_ids($match) {
 	global $lang_ids;
 	$lang_id = &$lang_ids[stripslashes($match[1])];
@@ -79,7 +69,7 @@ header("Cache-Control: immutable");
 			}
 		}
 		$tokens = token_get_all($return); // to find out the last token
-		return "?>\n$return" . (in_array($tokens[count($tokens) - 1][0], array(T_CLOSE_TAG, T_INLINE_HTML), true) ? "<?php" : "");
+		return "?>\n$return" . (in_array($tokens[count($tokens) - 1][0], [T_CLOSE_TAG, T_INLINE_HTML], true) ? "<?php" : "");
 	} elseif (preg_match('~\s*(\$pos = (.+\n).+;)~sU', $return, $match2)) {
 		// single language lang() is used for plural
 		return "function get_lang() {
@@ -106,7 +96,7 @@ function lzw_compress($string) {
 	// compression
 	$dictionary = array_flip(range("\0", "\xFF"));
 	$word = "";
-	$codes = array();
+	$codes = [];
 	for ($i=0; $i <= strlen($string); $i++) {
 		$x = @$string[$i];
 		if (strlen($x) && isset($dictionary[$word . $x])) {
@@ -192,8 +182,8 @@ function short_identifier($number, $chars) {
 // based on http://latrine.dgx.cz/jak-zredukovat-php-skripty
 function php_shrink($input) {
 	global $VERSION;
-	$special_variables = array_flip(array('$this', '$GLOBALS', '$_GET', '$_POST', '$_FILES', '$_COOKIE', '$_SESSION', '$_SERVER', '$http_response_header', '$php_errormsg'));
-	$short_variables = array();
+	$special_variables = array_flip(['$this', '$GLOBALS', '$_GET', '$_POST', '$_FILES', '$_COOKIE', '$_SESSION', '$_SERVER', '$http_response_header', '$php_errormsg']);
+	$short_variables = [];
 	$shortening = true;
 	$tokens = token_get_all($input);
 
@@ -202,10 +192,10 @@ function php_shrink($input) {
 	$shorten = 0;
 	$opening = -1;
 	foreach ($tokens as $i => $token) {
-		if (in_array($token[0], array(T_IF, T_ELSE, T_ELSEIF, T_WHILE, T_DO, T_FOR, T_FOREACH), true)) {
+		if (in_array($token[0], [T_IF, T_ELSE, T_ELSEIF, T_WHILE, T_DO, T_FOR, T_FOREACH], true)) {
 			$shorten = ($token[0] == T_FOR ? 4 : 2);
 			$opening = -1;
-		} elseif (in_array($token[0], array(T_SWITCH, T_FUNCTION, T_CLASS, T_CLOSE_TAG), true)) {
+		} elseif (in_array($token[0], [T_SWITCH, T_FUNCTION, T_CLASS, T_CLOSE_TAG], true)) {
 			$shorten = 0;
 		} elseif ($token === ';') {
 			$shorten--;
@@ -248,14 +238,14 @@ function php_shrink($input) {
 	$doc_comment = false; // include only first /**
 	for (reset($tokens); list($i, $token) = each($tokens); ) {
 		if (!is_array($token)) {
-			$token = array(0, $token);
+			$token = [0, $token];
 		}
 		if ($tokens[$i+2][0] === T_CLOSE_TAG && $tokens[$i+3][0] === T_INLINE_HTML && $tokens[$i+4][0] === T_OPEN_TAG
 			&& strlen(add_apo_slashes($tokens[$i+3][1])) < strlen($tokens[$i+3][1]) + 3
 		) {
-			$tokens[$i+2] = array(T_ECHO, 'echo');
-			$tokens[$i+3] = array(T_CONSTANT_ENCAPSED_STRING, "'" . add_apo_slashes($tokens[$i+3][1]) . "'");
-			$tokens[$i+4] = array(0, ';');
+			$tokens[$i+2] = [T_ECHO, 'echo'];
+			$tokens[$i+3] = [T_CONSTANT_ENCAPSED_STRING, "'" . add_apo_slashes($tokens[$i+3][1]) . "'"];
+			$tokens[$i+4] = [0, ';'];
 		}
 		if ($token[0] == T_COMMENT || $token[0] == T_WHITESPACE || ($token[0] == T_DOC_COMMENT && $doc_comment)) {
 			$space = "\n";
@@ -327,7 +317,7 @@ if (!function_exists("each")) {
 	function each(&$arr) {
 		$key = key($arr);
 		next($arr);
-		return $key === null ? false : array($key, $arr[$key]);
+		return $key === null ? false : [$key, $arr[$key]];
 	}
 }
 
@@ -385,8 +375,8 @@ foreach (glob(dirname(__FILE__) . "/adminer/drivers/" . ($driver ? $driver : "*"
 
 include dirname(__FILE__) . "/adminer/include/pdo.inc.php";
 include dirname(__FILE__) . "/adminer/include/driver.inc.php";
-$features = array("call" => "routine", "dump", "event", "privileges", "procedure" => "routine", "processlist", "routine", "scheme", "sequence", "status", "trigger", "type", "user" => "privileges", "variables", "view");
-$lang_ids = array(); // global variable simplifies usage in a callback function
+$features = ["call" => "routine", "dump", "event", "privileges", "procedure" => "routine", "processlist", "routine", "scheme", "sequence", "status", "trigger", "type", "user" => "privileges", "variables", "view"];
+$lang_ids = []; // global variable simplifies usage in a callback function
 $file = file_get_contents(dirname(__FILE__) . "/$project/index.php");
 if ($driver) {
 	$_GET[$driver] = true; // to load the driver

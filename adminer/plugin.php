@@ -11,9 +11,9 @@ function adminer_object() {
 	// enable extra drivers just by including them
 	//~ include "../plugins/drivers/simpledb.php";
 
-	$plugins = array(
+	$plugins = [
 		// specify enabled plugins here
-		new AdminerDatabaseHide(array('information_schema')),
+		new AdminerDatabaseHide(['information_schema']),
 		new AdminerDumpJson,
 		new AdminerDumpBz2,
 		new AdminerDumpZip,
@@ -31,7 +31,7 @@ function adminer_object() {
 		new AdminerEnumOption,
 		new AdminerTablesFilter,
 		new AdminerEditForeign,
-	);
+	];
 
 	/* It is possible to combine customization and plugins:
 	class AdminerCustomization extends AdminerPlugin {

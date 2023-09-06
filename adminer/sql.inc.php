@@ -10,7 +10,7 @@ restart_session();
 $history_all = &get_session("queries");
 $history = &$history_all[DB];
 if (!$error && $_POST["clear"]) {
-	$history = array();
+	$history = [];
 	redirect(remove_from_uri("history"));
 }
 
@@ -40,7 +40,7 @@ if (!$error && $_POST) {
 			$q = $query . (preg_match("~;[ \t\r\n]*\$~", $query) ? "" : ";"); //! doesn't work with DELIMITER |
 			if (!$history || reset(end($history)) != $q) { // no repeated queries
 				restart_session();
-				$history[] = array($q, time()); //! add elapsed time
+				$history[] = [$q, time()]; //! add elapsed time
 				set_session("queries", $history_all); // required because reference is unlinked by stop_session()
 				stop_session();
 			}
@@ -58,7 +58,7 @@ if (!$error && $_POST) {
 			}
 		}
 		$commands = 0;
-		$errors = array();
+		$errors = [];
 		$parse = '[\'"' . ($jush == "sql" ? '`#' : ($jush == "sqlite" ? '`[' : ($jush == "mssql" ? '[' : ''))) . ']|/\*|-- |$' . ($jush == "pgsql" ? '|\$[^$]*\$' : '');
 		$total_start = microtime(true);
 		parse_str($_COOKIE["adminer_export"], $adminer_export);
@@ -138,13 +138,13 @@ if (!$error && $_POST) {
 									$warnings = ($_POST["only_errors"] ? "" : $driver->warnings());
 									$warnings_id = "warnings-$commands";
 									if ($warnings) {
-										$time .= ", <a href='#$warnings_id'>" . lang('Warnings') . "</a>" . script("qsl('a').onclick = partial(toggle, '$warnings_id');", "");
+										$time .= ", <a href='#$warnings_id'>Warnings</a>" . script("qsl('a').onclick = partial(toggle, '$warnings_id');", "");
 									}
 									$explain = null;
 									$explain_id = "explain-$commands";
 									if (is_object($result)) {
 										$limit = $_POST["limit"];
-										$orgtables = select($result, $connection2, array(), $limit);
+										$orgtables = select($result, $connection2, [], $limit);
 										if (!$_POST["only_errors"]) {
 											echo "<form action='' method='post'>\n";
 											$num_rows = $result->num_rows;
@@ -154,7 +154,7 @@ if (!$error && $_POST) {
 												echo ", <a href='#$explain_id'>Explain</a>" . script("qsl('a').onclick = partial(toggle, '$explain_id');", "");
 											}
 											$id = "export-$commands";
-											echo ", <a href='#$id'>" . lang('Export') . "</a>" . script("qsl('a').onclick = partial(toggle, '$id');", "") . "<span id='$id' class='hidden'>: "
+											echo ", <a href='#$id'>Export</a>" . script("qsl('a').onclick = partial(toggle, '$id');", "") . "<span id='$id' class='hidden'>: "
 												. html_select("output", $adminer->dumpOutput(), $adminer_export["output"]) . " "
 												. html_select("format", $dump_format, $adminer_export["format"])
 												. "<input type='hidden' name='query' value='" . h($q) . "'>"
@@ -170,7 +170,7 @@ if (!$error && $_POST) {
 											stop_session();
 										}
 										if (!$_POST["only_errors"]) {
-											echo "<p class='message' title='" . h($connection->info) . "'>" . lang('Query executed OK, %d row(s) affected.', $affected) . "$time\n";
+											echo "<p class='message' title='" . h($connection->info) . "'>".'Query executed OK, '.$affected.' row(s) affected.'."$time\n";
 										}
 									}
 									echo ($warnings ? "<div id='$warnings_id' class='hidden'>\n$warnings</div>\n" : "");
@@ -196,7 +196,7 @@ if (!$error && $_POST) {
 		if ($empty) {
 			echo "<p class='message'>" . lang('No commands to execute.') . "\n";
 		} elseif ($_POST["only_errors"]) {
-			echo "<p class='message'>" . lang('%d query(s) executed OK.', $commands - count($errors));
+			echo "<p class='message'>" . $commands - count($errors).' query(s) executed OK.';
 			echo " <span class='time'>(" . format_time($total_start) . ")</span>\n";
 		} elseif ($errors && $commands > 1) {
 			echo "<p class='error'>" . lang('Error in query') . ": " . implode("", $errors) . "\n";
@@ -250,7 +250,7 @@ echo checkbox("only_errors", 1, ($_POST ? $_POST["only_errors"] : isset($_GET["i
 echo "<input type='hidden' name='token' value='$token'>\n";
 
 if (!isset($_GET["import"]) && $history) {
-	print_fieldset("history", lang('History'), $_GET["history"] != "");
+	print_fieldset("history", 'History', $_GET["history"] != "");
 	for ($val = end($history); $val; $val = prev($history)) { // not array_reverse() to save memory
 		$key = key($history);
 		list($q, $time, $elapsed) = $val;

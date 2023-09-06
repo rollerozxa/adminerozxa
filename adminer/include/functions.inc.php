@@ -87,7 +87,7 @@ function remove_slashes($process, $filter = false) {
 */
 function bracket_escape($idf, $back = false) {
 	// escape brackets inside name="x[]"
-	static $trans = array(':' => ':1', ']' => ':2', '[' => ':3', '"' => ':4');
+	static $trans = [':' => ':1', ']' => ':2', '[' => ':3', '"' => ':4'];
 	return strtr($idf, ($back ? array_flip($trans) : $trans));
 }
 
@@ -194,7 +194,7 @@ function checkbox($name, $value, $checked, $label = "", $onclick = "", $class = 
 function optionlist($options, $selected = null, $use_keys = false) {
 	$return = "";
 	foreach ($options as $k => $v) {
-		$opts = array($k => $v);
+		$opts = [$k => $v];
 		if (is_array($v)) {
 			$return .= '<optgroup label="' . h($k) . '">';
 			$opts = $v;
@@ -254,7 +254,7 @@ function select_input($attrs, $options, $value = "", $onchange = "", $placeholde
 * @return string
 */
 function confirm($message = "", $selector = "qsl('input')") {
-	return script("$selector.onclick = function () { return confirm('" . ($message ? js_escape($message) : lang('Are you sure?')) . "'); };", "");
+	return script("$selector.onclick = function () { return confirm('" . ($message ? js_escape($message) : 'Are you sure?') . "'); };", "");
 }
 
 /** Print header for hidden fieldset (close by </div></fieldset>)
@@ -360,7 +360,7 @@ function sid() {
 */
 function set_password($vendor, $server, $username, $password) {
 	$_SESSION["pwds"][$vendor][$server][$username] = ($_COOKIE["adminer_key"] && is_string($password)
-		? array(encrypt_string($password, $_COOKIE["adminer_key"]))
+		? [encrypt_string($password, $_COOKIE["adminer_key"])]
 		: $password
 	);
 }
@@ -395,7 +395,7 @@ function q($string) {
 */
 function get_vals($query, $column = 0) {
 	global $connection;
-	$return = array();
+	$return = [];
 	$result = $connection->query($query);
 	if (is_object($result)) {
 		while ($row = $result->fetch_row()) {
@@ -416,7 +416,7 @@ function get_key_vals($query, $connection2 = null, $set_keys = true) {
 	if (!is_object($connection2)) {
 		$connection2 = $connection;
 	}
-	$return = array();
+	$return = [];
 	$result = $connection2->query($query);
 	if (is_object($result)) {
 		while ($row = $result->fetch_row()) {
@@ -439,7 +439,7 @@ function get_key_vals($query, $connection2 = null, $set_keys = true) {
 function get_rows($query, $connection2 = null, $error = "<p class='error'>") {
 	global $connection;
 	$conn = (is_object($connection2) ? $connection2 : $connection);
-	$return = array();
+	$return = [];
 	$result = $conn->query($query);
 	if (is_object($result)) { // can return true
 		while ($row = $result->fetch_assoc()) {
@@ -459,7 +459,7 @@ function get_rows($query, $connection2 = null, $error = "<p class='error'>") {
 function unique_array($row, $indexes) {
 	foreach ($indexes as $index) {
 		if (preg_match("~PRIMARY|UNIQUE~", $index["type"])) {
-			$return = array();
+			$return = [];
 			foreach ($index["columns"] as $key) {
 				if (!isset($row[$key])) { // NULL is ambiguous
 					continue 2;
@@ -487,9 +487,9 @@ function escape_key($key) {
 * @param array
 * @return string
 */
-function where($where, $fields = array()) {
+function where($where, $fields = []) {
 	global $connection, $jush;
-	$return = array();
+	$return = [];
 	foreach ((array) $where["where"] as $key => $val) {
 		$key = bracket_escape($key, 1); // 1 - back
 		$column = escape_key($key);
@@ -514,9 +514,9 @@ function where($where, $fields = array()) {
 * @param array
 * @return string
 */
-function where_check($val, $fields = array()) {
+function where_check($val, $fields = []) {
 	parse_str($val, $check);
-	remove_slashes(array(&$check));
+	remove_slashes([&$check]);
 	return where($check, $fields);
 }
 
@@ -537,7 +537,7 @@ function where_link($i, $column, $value, $operator = "=") {
 * @param array
 * @return string
 */
-function convert_fields($columns, $fields, $select = array()) {
+function convert_fields($columns, $fields, $select = []) {
 	$return = "";
 	foreach ($columns as $key => $val) {
 		if ($select && !in_array(idf_escape($key), $select)) {
@@ -689,14 +689,14 @@ function query_redirect($query, $location, $message, $redirect = true, $execute 
 */
 function queries($query) {
 	global $connection;
-	static $queries = array();
+	static $queries = [];
 	static $start;
 	if (!$start) {
 		$start = microtime(true);
 	}
 	if ($query === null) {
 		// return executed queries
-		return array(implode("\n", $queries), format_time($start));
+		return [implode("\n", $queries), format_time($start)];
 	}
 	$queries[] = (preg_match('~;$~', $query) ? "DELIMITER ;;\n$query;\nDELIMITER " : $query) . ";";
 	return $connection->query($query);
@@ -849,7 +849,7 @@ function shorten_utf8($string, $length = 80, $suffix = "") {
 * @return string
 */
 function format_number($val) {
-	return strtr(number_format($val, 0, ".", lang(',')), preg_split('~~u', lang('0123456789'), -1, PREG_SPLIT_NO_EMPTY));
+	return strtr(number_format($val, 0, ".", ','), preg_split('~~u', '0123456789', -1, PREG_SPLIT_NO_EMPTY));
 }
 
 /** Generate friendly URL
@@ -867,12 +867,12 @@ function friendly_url($val) {
 * @param string
 * @return bool
 */
-function hidden_fields($process, $ignore = array(), $prefix = '') {
+function hidden_fields($process, $ignore = [], $prefix = '') {
 	$return = false;
 	foreach ($process as $key => $val) {
 		if (!in_array($key, $ignore)) {
 			if (is_array($val)) {
-				hidden_fields($val, array(), $key);
+				hidden_fields($val, [], $key);
 			} else {
 				$return = true;
 				echo '<input type="hidden" name="' . h($prefix ? $prefix . "[$key]" : $key) . '" value="' . h($val) . '">';
@@ -898,7 +898,7 @@ function hidden_fields_get() {
 */
 function table_status1($table, $fast = false) {
 	$return = table_status($table, $fast);
-	return ($return ? $return : array("Name" => $table));
+	return ($return ? $return : ["Name" => $table]);
 }
 
 /** Find out foreign keys for each column
@@ -907,7 +907,7 @@ function table_status1($table, $fast = false) {
 */
 function column_foreign_keys($table) {
 	global $adminer;
-	$return = array();
+	$return = [];
 	foreach ($adminer->foreignKeys($table) as $foreign_key) {
 		foreach ($foreign_key["source"] as $val) {
 			$return[$val][] = $foreign_key;
@@ -947,7 +947,7 @@ function input($field, $value, $function) {
 	$name = h(bracket_escape($field["field"]));
 	echo "<td class='function'>";
 	if (is_array($value) && !$function) {
-		$args = array($value);
+		$args = [$value];
 		if (version_compare(PHP_VERSION, 5.4) >= 0) {
 			$args[] = JSON_PRETTY_PRINT;
 		}
@@ -958,7 +958,7 @@ function input($field, $value, $function) {
 	if ($reset && !$_POST["save"]) {
 		$function = null;
 	}
-	$functions = (isset($_GET["select"]) || $reset ? array("orig" => lang('original')) : array()) + $adminer->editFunctions($field);
+	$functions = (isset($_GET["select"]) || $reset ? ["orig" => lang('original')] : []) + $adminer->editFunctions($field);
 	$attrs = " name='fields[$name]'";
 	if ($field["type"] == "enum") {
 		echo h($functions[""]) . "<td>" . $adminer->editInput($_GET["edit"], $field, $attrs, $value);
@@ -1077,7 +1077,7 @@ function process_input($field) {
 */
 function fields_from_edit() {
 	global $driver;
-	$return = array();
+	$return = [];
 	foreach ((array) $_POST["field_keys"] as $key => $val) {
 		if ($val != "") {
 			$val = bracket_escape($val);
@@ -1087,12 +1087,12 @@ function fields_from_edit() {
 	}
 	foreach ((array) $_POST["fields"] as $key => $val) {
 		$name = bracket_escape($key, 1); // 1 - back
-		$return[$name] = array(
+		$return[$name] = [
 			"field" => $name,
-			"privileges" => array("insert" => 1, "update" => 1),
+			"privileges" => ["insert" => 1, "update" => 1],
 			"null" => 1,
 			"auto_increment" => ($key == $driver->primary),
-		);
+		];
 	}
 	return $return;
 }
@@ -1109,7 +1109,7 @@ function search_tables() {
 	foreach (table_status('', true) as $table => $table_status) {
 		$name = $adminer->tableName($table_status);
 		if (isset($table_status["Engine"]) && $name != "" && (!$_POST["tables"] || in_array($table, $_POST["tables"]))) {
-			$result = $connection->query("SELECT" . limit("1 FROM " . table($table), " WHERE " . implode(" AND ", $adminer->selectSearchProcess(fields($table), array())), 1));
+			$result = $connection->query("SELECT" . limit("1 FROM " . table($table), " WHERE " . implode(" AND ", $adminer->selectSearchProcess(fields($table), [])), 1));
 			if (!$result || $result->fetch_row()) {
 				$print = "<a href='" . h(ME . "select=" . urlencode($table) . "&where[0][op]=" . urlencode($_GET["where"][0]["op"]) . "&where[0][val]=" . urlencode($_GET["where"][0]["val"])) . "'>$name</a>";
 				echo "$sep<li>" . ($result ? $print : "<p class='error'>$print: " . error()) . "\n";
@@ -1136,19 +1136,6 @@ function dump_headers($identifier, $multi_table = false) {
 	ob_flush();
 	flush();
 	return $return;
-}
-
-/** Print CSV row
-* @param array
-* @return null
-*/
-function dump_csv($row) {
-	foreach ($row as $key => $val) {
-		if (preg_match('~["\n,;\t]|^0|\.\d*0$~', $val) || $val === "") {
-			$row[$key] = '"' . str_replace('"', '""', $val) . '"';
-		}
-	}
-	echo implode(($_POST["format"] == "csv" ? "," : ($_POST["format"] == "tsv" ? "\t" : ";")), $row) . "\r\n";
 }
 
 /** Apply SQL function
@@ -1416,7 +1403,7 @@ function lzw_decompress($binary) {
 	// convert binary string to codes
 	$dictionary_count = 256;
 	$bits = 8; // ceil(log($dictionary_count, 2))
-	$codes = array();
+	$codes = [];
 	$rest = 0;
 	$rest_length = 0;
 	for ($i=0; $i < strlen($binary); $i++) {
@@ -1471,7 +1458,7 @@ function edit_form($table, $fields, $row, $update) {
 	page_header(
 		($update ? lang('Edit') : lang('Insert')),
 		$error,
-		array("select" => array($table, $table_name)),
+		["select" => [$table, $table_name]],
 		$table_name
 	);
 	$adminer->editRowPrint($table, $fields, $row, $update);
@@ -1529,7 +1516,7 @@ function edit_form($table, $fields, $row, $update) {
 			echo "<tr>"
 				. "<th><input name='field_keys[]'>"
 				. script("qsl('input').oninput = fieldChange;")
-				. "<td class='function'>" . html_select("field_funs[]", $adminer->editFunctions(array("null" => isset($_GET["select"]))))
+				. "<td class='function'>" . html_select("field_funs[]", $adminer->editFunctions(["null" => isset($_GET["select"])]))
 				. "<td><input name='field_vals[]'>"
 				. "\n"
 			;
@@ -1551,7 +1538,7 @@ function edit_form($table, $fields, $row, $update) {
 		: ($_POST || !$fields ? "" : script("focus(qsa('td', qs('#form'))[1].firstChild);"))
 	);
 	if (isset($_GET["select"])) {
-		hidden_fields(array("check" => (array) $_POST["check"], "clone" => $_POST["clone"], "all" => $_POST["all"]));
+		hidden_fields(["check" => (array) $_POST["check"], "clone" => $_POST["clone"], "all" => $_POST["all"]]);
 	}
 	?>
 <input type="hidden" name="referer" value="<?=h(isset($_POST["referer"]) ? $_POST["referer"] : $_SERVER["HTTP_REFERER"]) ?>">

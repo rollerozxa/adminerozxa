@@ -5,12 +5,12 @@ if ($_POST && !$error && !isset($_POST["add_x"])) { // add is an image and PHP c
 	$name = trim($row["name"]);
 	if ($_POST["drop"]) {
 		$_GET["db"] = ""; // to save in global history
-		queries_redirect(remove_from_uri("db|database"), lang('Database has been dropped.'), drop_databases(array(DB)));
+		queries_redirect(remove_from_uri("db|database"), 'Database has been dropped.', drop_databases([DB]));
 	} elseif (DB !== $name) {
 		// create or rename database
 		if (DB != "") {
 			$_GET["db"] = $name;
-			queries_redirect(preg_replace('~\bdb=[^&]*&~', '', ME) . "db=" . urlencode($name), lang('Database has been renamed.'), rename_database($name, $row["collation"]));
+			queries_redirect(preg_replace('~\bdb=[^&]*&~', '', ME) . "db=" . urlencode($name), 'Database has been renamed.', rename_database($name, $row["collation"]));
 		} else {
 			$databases = explode("\n", str_replace("\r", "", $name));
 			$success = true;
@@ -25,7 +25,7 @@ if ($_POST && !$error && !isset($_POST["add_x"])) { // add is an image and PHP c
 			}
 			restart_session();
 			set_session("dbs", null);
-			queries_redirect(ME . "db=" . urlencode($last), lang('Database has been created.'), $success);
+			queries_redirect(ME . "db=" . urlencode($last), 'Database has been created.', $success);
 		}
 	} else {
 		// alter database
@@ -36,7 +36,7 @@ if ($_POST && !$error && !isset($_POST["add_x"])) { // add is an image and PHP c
 	}
 }
 
-page_header(DB != "" ? lang('Alter database') : lang('Create database'), $error, array(), h(DB));
+page_header(DB != "" ? 'Alter database' : 'Create database', $error, [], h(DB));
 
 $collations = collations();
 $name = DB;
@@ -61,13 +61,13 @@ if ($_POST) {
 echo ($_POST["add_x"] || strpos($name, "\n")
 	? '<textarea id="name" name="name" rows="10" cols="40">' . h($name) . '</textarea><br>'
 	: '<input name="name" id="name" value="' . h($name) . '" data-maxlength="64" autocapitalize="off">'
-) . "\n" . ($collations ? html_select("collation", array("" => "(" . lang('collation') . ")") + $collations, $row["collation"]) . doc_link(array(
+) . "\n" . ($collations ? html_select("collation", ["" => "(" . lang('collation') . ")"] + $collations, $row["collation"]) . doc_link([
 	'sql' => "charset-charsets.html",
 	'mariadb' => "supported-character-sets-and-collations/",
-)) : "");
+]) : "");
 echo script("focus(qs('#name'));");
 ?>
-<input type="submit" value="<?=lang('Save') ?>">
+<input type="submit" value="Save">
 <?php
 if (DB != "") {
 	echo "<input type='submit' name='drop' value='" . lang('Drop') . "'>" . confirm(lang('Drop %s?', DB)) . "\n";

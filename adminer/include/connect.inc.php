@@ -3,19 +3,19 @@ function connect_error() {
 	global $adminer, $connection, $token, $error, $drivers;
 	if (DB != "") {
 		header("HTTP/1.1 404 Not Found");
-		page_header(lang('Database') . ": " . h(DB), lang('Invalid database.'), true);
+		page_header('Database: ' . h(DB), 'Invalid database.', true);
 	} else {
 		if ($_POST["db"] && !$error) {
-			queries_redirect(substr(ME, 0, -1), lang('Databases have been dropped.'), drop_databases($_POST["db"]));
+			queries_redirect(substr(ME, 0, -1), 'Databases have been dropped.', drop_databases($_POST["db"]));
 		}
 
-		page_header(lang('Select database'), $error, false);
+		page_header('Select database', $error, false);
 		$actions = [
-			'database' => lang('Create database'),
-			'privileges' => lang('Privileges'),
-			'processlist' => lang('Process list'),
-			'variables' => lang('Variables'),
-			'status' => lang('Status'),
+			'database' => 'Create database',
+			'privileges' => 'Privileges',
+			'processlist' => 'Process list',
+			'variables' => 'Variables',
+			'status' => 'Status',
 		];
 		$links = [];
 		foreach ($actions as $key => $val) {
@@ -35,10 +35,10 @@ function connect_error() {
 			echo script("mixin(qsl('table'), {onclick: tableClick, ondblclick: partialArg(tableClick, true)});");
 			echo "<thead><tr>"
 				. (support("database") ? "<td>" : "")
-				. "<th>" . lang('Database') . " - <a href='" . h(ME) . "refresh=1'>" . lang('Refresh') . "</a>"
-				. "<td>" . lang('Collation')
-				. "<td>" . lang('Tables')
-				. "<td>" . lang('Size') . " - <a href='" . h(ME) . "dbsize=1'>" . lang('Compute') . "</a>" . script("qsl('a').onclick = partial(ajaxSetHtml, '" . js_escape(ME) . "script=connect');", "")
+				. "<th>Database - <a href='" . h(ME) . "refresh=1'>Refresh</a>"
+				. "<td>Collation"
+				. "<td>Tables"
+				. "<td>Size - <a href='" . h(ME) . "dbsize=1'>" . 'Compute' . "</a>" . script("qsl('a').onclick = partial(ajaxSetHtml, '" . js_escape(ME) . "script=connect');", "")
 				. "</thead>\n"
 			;
 
@@ -98,7 +98,7 @@ if (support("scheme")) {
 		}
 		if (!set_schema($_GET["ns"])) {
 			header("HTTP/1.1 404 Not Found");
-			page_header(lang('Schema') . ": " . h($_GET["ns"]), lang('Invalid schema.'), true);
+			page_header('Schema: ' . h($_GET["ns"]), 'Invalid schema.', true);
 			page_footer("ns");
 			exit;
 		}

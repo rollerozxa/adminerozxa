@@ -12,13 +12,13 @@ if ($tables_views && !$error && !$_POST["search"]) {
 		if ($_POST["tables"]) {
 			$result = truncate_tables($_POST["tables"]);
 		}
-		$message = lang('Tables have been truncated.');
+		$message = 'Tables have been truncated.';
 	} elseif ($_POST["move"]) {
 		$result = move_tables((array) $_POST["tables"], (array) $_POST["views"], $_POST["target"]);
-		$message = lang('Tables have been moved.');
+		$message = 'Tables have been moved.';
 	} elseif ($_POST["copy"]) {
 		$result = copy_tables((array) $_POST["tables"], (array) $_POST["views"], $_POST["target"]);
-		$message = lang('Tables have been copied.');
+		$message = 'Tables have been copied.';
 	} elseif ($_POST["drop"]) {
 		if ($_POST["views"]) {
 			$result = drop_views($_POST["views"]);
@@ -26,15 +26,15 @@ if ($tables_views && !$error && !$_POST["search"]) {
 		if ($result && $_POST["tables"]) {
 			$result = drop_tables($_POST["tables"]);
 		}
-		$message = lang('Tables have been dropped.');
+		$message = 'Tables have been dropped.';
 	} elseif ($jush != "sql") {
 		$result = ($jush == "sqlite"
 			? queries("VACUUM")
 			: apply_queries("VACUUM" . ($_POST["optimize"] ? "" : " ANALYZE"), $_POST["tables"])
 		);
-		$message = lang('Tables have been optimized.');
+		$message = 'Tables have been optimized.';
 	} elseif (!$_POST["tables"]) {
-		$message = lang('No tables.');
+		$message = 'No tables.';
 	} elseif ($result = queries(($_POST["optimize"] ? "OPTIMIZE" : ($_POST["check"] ? "CHECK" : ($_POST["repair"] ? "REPAIR" : "ANALYZE"))) . " TABLE " . implode(", ", array_map('idf_escape', $_POST["tables"])))) {
 		while ($row = $result->fetch_assoc()) {
 			$message .= "<b>" . h($row["Table"]) . "</b>: " . h($row["Msg_text"]) . "<br>";
@@ -61,7 +61,7 @@ if ($adminer->homepage()) {
 				echo " <input type='submit' name='search' value='" . lang('Search') . "'>\n";
 				if ($adminer->operator_regexp !== null) {
 					echo "<p><label><input type='checkbox' name='regexp' value='1'" . (empty($_POST['regexp']) ? '' : ' checked') . '>' . lang('as a regular expression') . '</label>';
-					echo doc_link(array('sql' => 'regexp.html', 'pgsql' => 'functions-matching.html#FUNCTIONS-POSIX-REGEXP')) . "</p>\n";
+					echo doc_link(['sql' => 'regexp.html', 'pgsql' => 'functions-matching.html#FUNCTIONS-POSIX-REGEXP']) . "</p>\n";
 				}
 				echo "</div></fieldset>\n";
 				if ($_POST["search"] && $_POST["query"] != "") {
@@ -74,15 +74,15 @@ if ($adminer->homepage()) {
 			echo script("mixin(qsl('table'), {onclick: tableClick, ondblclick: partialArg(tableClick, true)});");
 			echo '<thead><tr class="wrap">';
 			echo '<td><input id="check-all" type="checkbox" class="jsonly">' . script("qs('#check-all').onclick = partial(formCheck, /^(tables|views)\[/);", "");
-			echo '<th>' . lang('Table');
-			echo '<td>' . lang('Engine') . doc_link(array('sql' => 'storage-engines.html'));
-			echo '<td>' . lang('Collation') . doc_link(array('sql' => 'charset-charsets.html', 'mariadb' => 'supported-character-sets-and-collations/'));
-			echo '<td>' . lang('Data Length') . doc_link(array('sql' => 'show-table-status.html', 'pgsql' => 'functions-admin.html#FUNCTIONS-ADMIN-DBOBJECT', 'oracle' => 'REFRN20286'));
-			echo '<td>' . lang('Index Length') . doc_link(array('sql' => 'show-table-status.html', 'pgsql' => 'functions-admin.html#FUNCTIONS-ADMIN-DBOBJECT'));
-			echo '<td>' . lang('Data Free') . doc_link(array('sql' => 'show-table-status.html'));
-			echo '<td>' . lang('Auto Increment') . doc_link(array('sql' => 'example-auto-increment.html', 'mariadb' => 'auto_increment/'));
-			echo '<td>' . lang('Rows') . doc_link(array('sql' => 'show-table-status.html', 'pgsql' => 'catalog-pg-class.html#CATALOG-PG-CLASS', 'oracle' => 'REFRN20286'));
-			echo (support("comment") ? '<td>' . lang('Comment') . doc_link(array('sql' => 'show-table-status.html', 'pgsql' => 'functions-info.html#FUNCTIONS-INFO-COMMENT-TABLE')) : '');
+			echo '<th>Table';
+			echo '<td>Engine' . doc_link(['sql' => 'storage-engines.html']);
+			echo '<td>Collation' . doc_link(['sql' => 'charset-charsets.html', 'mariadb' => 'supported-character-sets-and-collations/']);
+			echo '<td>Data Length' . doc_link(['sql' => 'show-table-status.html', 'pgsql' => 'functions-admin.html#FUNCTIONS-ADMIN-DBOBJECT', 'oracle' => 'REFRN20286']);
+			echo '<td>Index Length' . doc_link(['sql' => 'show-table-status.html', 'pgsql' => 'functions-admin.html#FUNCTIONS-ADMIN-DBOBJECT']);
+			echo '<td>Data Free' . doc_link(['sql' => 'show-table-status.html']);
+			echo '<td>Auto Increment' . doc_link(['sql' => 'example-auto-increment.html', 'mariadb' => 'auto_increment/']);
+			echo '<td>Rows' . doc_link(['sql' => 'show-table-status.html', 'pgsql' => 'catalog-pg-class.html#CATALOG-PG-CLASS', 'oracle' => 'REFRN20286']);
+			echo (support("comment") ? '<td>Comment' . doc_link(['sql' => 'show-table-status.html']) : '');
 			echo "</thead>\n";
 
 			$tables = 0;
@@ -90,20 +90,20 @@ if ($adminer->homepage()) {
 				$view = ($type !== null && !preg_match('~table|sequence~i', $type));
 				$id = h("Table-" . $name);
 				echo '<tr' . odd() . '><td>' . checkbox(($view ? "views[]" : "tables[]"), $name, in_array($name, $tables_views, true), "", "", "", $id);
-				echo '<th>' . (support("table") || support("indexes") ? "<a href='" . h(ME) . "table=" . urlencode($name) . "' title='" . lang('Show structure') . "' id='$id'>" . h($name) . '</a>' : h($name));
+				echo '<th>' . (support("table") || support("indexes") ? "<a href='" . h(ME) . "table=" . urlencode($name) . "' title='Show structure' id='$id'>" . h($name) . '</a>' : h($name));
 				if ($view) {
-					echo '<td colspan="6"><a href="' . h(ME) . "view=" . urlencode($name) . '" title="' . lang('Alter view') . '">' . (preg_match('~materialized~i', $type) ? lang('Materialized view') : lang('View')) . '</a>';
-					echo '<td align="right"><a href="' . h(ME) . "select=" . urlencode($name) . '" title="' . lang('Select data') . '">?</a>';
+					echo '<td colspan="6"><a href="' . h(ME) . "view=" . urlencode($name) . '" title="Alter view">' . (preg_match('~materialized~i', $type) ? 'Materialized view' : 'View') . '</a>';
+					echo '<td align="right"><a href="' . h(ME) . "select=" . urlencode($name) . '" title="Select data">?</a>';
 				} else {
-					foreach (array(
-						"Engine" => array(),
-						"Collation" => array(),
-						"Data_length" => array("create", lang('Alter table')),
-						"Index_length" => array("indexes", lang('Alter indexes')),
-						"Data_free" => array("edit", lang('New item')),
-						"Auto_increment" => array("auto_increment=1&create", lang('Alter table')),
-						"Rows" => array("select", lang('Select data')),
-					) as $key => $link) {
+					foreach ([
+						"Engine" => [],
+						"Collation" => [],
+						"Data_length" => ["create", 'Alter table'],
+						"Index_length" => ["indexes", 'Alter indexes'],
+						"Data_free" => ["edit", 'New item'],
+						"Auto_increment" => ["auto_increment=1&create", 'Alter table'],
+						"Rows" => ["select", 'Select data'],
+					] as $key => $link) {
 						$id = " id='$key-" . h($name) . "'";
 						echo ($link ? "<td align='right'>" . (support("table") || $key == "Rows" || (support("indexes") && $key != "Data_length")
 							? "<a href='" . h(ME . "$link[0]=") . urlencode($name) . "'$id title='$link[1]'>?</a>"
@@ -118,7 +118,7 @@ if ($adminer->homepage()) {
 			echo "<tr><td><th>" . lang('%d in total', count($tables_list));
 			echo "<td>" . h($jush == "sql" ? $connection->result("SELECT @@default_storage_engine") : "");
 			echo "<td>" . h(db_collation(DB, collations()));
-			foreach (array("Data_length", "Index_length", "Data_free") as $key) {
+			foreach (["Data_length", "Index_length", "Data_free"] as $key) {
 				echo "<td align='right' id='sum-$key'>";
 			}
 

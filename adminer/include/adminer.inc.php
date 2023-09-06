@@ -16,7 +16,7 @@ class Adminer {
 	* @return array ($server, $username, $password)
 	*/
 	function credentials() {
-		return array(SERVER, $_GET["username"], get_password());
+		return [SERVER, $_GET["username"], get_password()];
 	}
 
 	/** Get SSL connection options
@@ -105,7 +105,7 @@ class Adminer {
 	* @return array of strings
 	*/
 	function css() {
-		$return = array();
+		$return = [];
 		$filename = "adminer.css";
 		if (file_exists($filename)) {
 			$return[] = "$filename?v=" . crc32(file_get_contents($filename));
@@ -176,19 +176,19 @@ class Adminer {
 	function selectLinks($tableStatus, $set = "") {
 		global $jush, $driver;
 		echo '<p class="links">';
-		$actions = array("select" => lang('Select data'));
+		$actions = ["select" => lang('Select data')];
 		if (support("table") || support("indexes")) {
-			$actions["table"] = lang('Show structure');
+			$actions["table"] = 'Show structure';
 		}
 		if (support("table")) {
 			if (is_view($tableStatus)) {
-				$actions["view"] = lang('Alter view');
+				$actions["view"] = 'Alter view';
 			} else {
-				$actions["create"] = lang('Alter table');
+				$actions["create"] = 'Alter table';
 			}
 		}
 		if ($set !== null) {
-			$actions["edit"] = lang('New item');
+			$actions["edit"] = 'New item';
 		}
 		$name = $tableStatus["Name"];
 		$links = [];
@@ -196,7 +196,7 @@ class Adminer {
 			$links[] = "<a href='" . h(ME) . "$key=" . urlencode($name) . ($key == "edit" ? $set : "") . "'" . bold(isset($_GET[$key])) . ">$val</a>";
 		}
 		echo generate_linksbar($links);
-		echo doc_link(array($jush => $driver->tableHelp($name)), "?");
+		echo doc_link([$jush => $driver->tableHelp($name)], "?");
 		echo "\n";
 	}
 
@@ -214,7 +214,7 @@ class Adminer {
 	* @return array $return[$target_table]["keys"][$key_name][$target_column] = $source_column; $return[$target_table]["name"] = $this->tableName($target_table);
 	*/
 	function backwardKeys($table, $tableName) {
-		return array();
+		return [];
 	}
 
 	/** Print backward keys for row
@@ -235,7 +235,7 @@ class Adminer {
 		global $jush, $driver;
 		if (!$failed && ($warnings = $driver->warnings())) {
 			$id = "warnings";
-			$return = ", <a href='#$id'>" . lang('Warnings') . "</a>" . script("qsl('a').onclick = partial(toggle, '$id');", "")
+			$return = ", <a href='#$id'>Warnings</a>" . script("qsl('a').onclick = partial(toggle, '$id');", "")
 				. "<div id='$id' class='hidden'>\n$warnings</div>\n"
 			;
 		}
@@ -291,7 +291,7 @@ class Adminer {
 	function selectVal($val, $link, $field, $original) {
 		$return = ($val === null ? "<i>NULL</i>" : (preg_match("~char|binary|boolean~", $field["type"]) && !preg_match("~var~", $field["type"]) ? "<code>$val</code>" : $val));
 		if (preg_match('~blob|bytea|raw|file~', $field["type"]) && !is_utf8($val)) {
-			$return = "<i>" . lang('%d byte(s)', strlen($original)) . "</i>";
+			$return = "<i>".strlen($original).' byte(s)</i>';
 		}
 		if (preg_match('~json~', $field["type"])) {
 			$return = "<code class='jush-js'>$return</code>";
@@ -337,7 +337,7 @@ class Adminer {
 		echo "<table cellspacing='0'>\n";
 		foreach ($indexes as $name => $index) {
 			ksort($index["columns"]); // enforce correct columns order
-			$print = array();
+			$print = [];
 			foreach ($index["columns"] as $key => $val) {
 				$print[] = "<i>" . h($val) . "</i>"
 					. ($index["lengths"][$key] ? "(" . $index["lengths"][$key] . ")" : "")
@@ -356,9 +356,9 @@ class Adminer {
 	*/
 	function selectColumnsPrint($select, $columns) {
 		global $functions, $grouping;
-		print_fieldset("select", lang('Select'), $select);
+		print_fieldset("select", 'Select', $select);
 		$i = 0;
-		$select[""] = array();
+		$select[""] = [];
 		foreach ($select as $key => $val) {
 			$val = $_GET["columns"][$key];
 			$column = select_input(
@@ -368,7 +368,7 @@ class Adminer {
 				($key !== "" ? "selectFieldChange" : "selectAddRow")
 			);
 			echo "<div>" . ($functions || $grouping ? "<select name='columns[$i][fun]'>"
-				. optionlist(array(-1 => "") + array_filter(array(lang('Functions') => $functions, lang('Aggregation') => $grouping)), $val["fun"]) . "</select>"
+				. optionlist([-1 => ""] + array_filter([lang('Functions') => $functions, lang('Aggregation') => $grouping]), $val["fun"]) . "</select>"
 				. on_help("getTarget(event).value && getTarget(event).value.replace(/ |\$/, '(') + ')'", 1)
 				. script("qsl('select').onchange = function () { helpClose();" . ($key !== "" ? "" : " qsl('select, input', this.parentNode).onchange();") . " };", "")
 				. "($column)" : $column) . "</div>\n";
@@ -384,7 +384,7 @@ class Adminer {
 	* @return null
 	*/
 	function selectSearchPrint($where, $columns, $indexes) {
-		print_fieldset("search", lang('Search'), $where);
+		print_fieldset("search", 'Search', $where);
 		foreach ($indexes as $i => $index) {
 			if ($index["type"] == "FULLTEXT") {
 				echo "<div>(<i>" . implode("</i>, <i>", array_map('h', $index["columns"])) . "</i>) AGAINST";
@@ -395,7 +395,7 @@ class Adminer {
 			}
 		}
 		$change_next = "this.parentNode.firstChild.onchange();";
-		foreach (array_merge((array) $_GET["where"], array(array())) as $i => $val) {
+		foreach (array_merge((array) $_GET["where"], [[]]) as $i => $val) {
 			if (!$val || ("$val[col]$val[val]" != "" && in_array($val["op"], $this->operators))) {
 				echo "<div>" . select_input(
 					" name='where[$i][col]'",
@@ -420,7 +420,7 @@ class Adminer {
 	* @return null
 	*/
 	function selectOrderPrint($order, $columns, $indexes) {
-		print_fieldset("sort", lang('Sort'), $order);
+		print_fieldset("sort", 'Sort', $order);
 		$i = 0;
 		foreach ((array) $_GET["order"] as $key => $val) {
 			if ($val != "") {
@@ -467,7 +467,7 @@ class Adminer {
 		echo " <span id='noindex' title='" . lang('Full table scan') . "'></span>";
 		echo "<script" . nonce() . ">\n";
 		echo "var indexColumns = ";
-		$columns = array();
+		$columns = [];
 		foreach ($indexes as $index) {
 			$current_key = reset($index["columns"]);
 			if ($index["type"] != "FULLTEXT" && $current_key) {
@@ -513,8 +513,8 @@ class Adminer {
 	*/
 	function selectColumnsProcess($columns, $indexes) {
 		global $functions, $grouping;
-		$select = array(); // select expressions, empty for *
-		$group = array(); // expressions without aggregation - will be used for GROUP BY if an aggregation function is used
+		$select = []; // select expressions, empty for *
+		$group = []; // expressions without aggregation - will be used for GROUP BY if an aggregation function is used
 		foreach ((array) $_GET["columns"] as $key => $val) {
 			if ($val["fun"] == "count" || ($val["col"] != "" && (!$val["fun"] || in_array($val["fun"], $functions) || in_array($val["fun"], $grouping)))) {
 				$select[$key] = apply_sql_function($val["fun"], ($val["col"] != "" ? idf_escape($val["col"]) : "*"));
@@ -523,7 +523,7 @@ class Adminer {
 				}
 			}
 		}
-		return array($select, $group);
+		return [$select, $group];
 	}
 
 	/** Process search box in select
@@ -533,7 +533,7 @@ class Adminer {
 	*/
 	function selectSearchProcess($fields, $indexes) {
 		global $connection, $driver;
-		$return = array();
+		$return = [];
 		foreach ($indexes as $i => $index) {
 			if ($index["type"] == "FULLTEXT" && $_GET["fulltext"][$i] != "") {
 				$return[] = "MATCH (" . implode(", ", array_map('idf_escape', $index["columns"])) . ") AGAINST (" . q($_GET["fulltext"][$i]) . (isset($_GET["boolean"][$i]) ? " IN BOOLEAN MODE" : "") . ")";
@@ -562,7 +562,7 @@ class Adminer {
 					$return[] = $prefix . $driver->convertSearch(idf_escape($val["col"]), $val, $fields[$val["col"]]) . $cond;
 				} else {
 					// find anywhere
-					$cols = array();
+					$cols = [];
 					foreach ($fields as $name => $field) {
 						if ((preg_match('~^[-\d.' . (preg_match('~IN$~', $val["op"]) ? ',' : '') . ']+$~', $val["val"]) || !preg_match('~' . number_type() . '|bit~', $field["type"]))
 							&& (!preg_match("~[\x80-\xFF]~", $val["val"]) || preg_match('~char|text|enum|set~', $field["type"]))
@@ -584,7 +584,7 @@ class Adminer {
 	* @return array expressions to join by comma
 	*/
 	function selectOrderProcess($fields, $indexes) {
-		$return = array();
+		$return = [];
 		foreach ((array) $_GET["order"] as $key => $val) {
 			if ($val != "") {
 				$return[] = (preg_match('~^((COUNT\(DISTINCT |[A-Z0-9_]+\()(`(?:[^`]|``)+`|"(?:[^"]|"")+")\)|COUNT\(\*\))$~', $val) ? $val : idf_escape($val)) //! MS SQL uses []
@@ -642,12 +642,12 @@ class Adminer {
 		restart_session();
 		$history = &get_session("queries");
 		if (!$history[$_GET["db"]]) {
-			$history[$_GET["db"]] = array();
+			$history[$_GET["db"]] = [];
 		}
 		if (strlen($query) > 1e6) {
 			$query = preg_replace('~[\x80-\xFF]+$~', '', substr($query, 0, 1e6)) . "\n…"; // [\x80-\xFF] - valid UTF-8, \n - can end by one-line comment
 		}
-		$history[$_GET["db"]][] = array($query, time(), $time); // not DB - $_GET["db"] is changed in database.inc.php //! respect $_GET["ns"]
+		$history[$_GET["db"]][] = [$query, time(), $time]; // not DB - $_GET["db"] is changed in database.inc.php //! respect $_GET["ns"]
 		$sql_id = "sql-" . count($history[$_GET["db"]]);
 		$return = "<a href='#$sql_id' class='toggle'>" . lang('SQL command') . "</a>\n";
 		if (!$failed && ($warnings = $driver->warnings())) {
@@ -698,7 +698,7 @@ class Adminer {
 			}
 		}
 		if ($field["auto_increment"] && !$update) {
-			$return = lang('Auto Increment');
+			$return = 'Auto Increment';
 		}
 		return explode("/", $return);
 	}
@@ -762,7 +762,7 @@ class Adminer {
 	* @return array
 	*/
 	function dumpOutput() {
-		$return = array('text' => lang('open'), 'file' => lang('save'));
+		$return = ['text' => 'open', 'file' => lang('save')];
 		if (function_exists('gzencode')) {
 			$return['gz'] = 'gzip';
 		}
@@ -773,7 +773,7 @@ class Adminer {
 	* @return array empty to disable export
 	*/
 	function dumpFormat() {
-		return array('sql' => 'SQL', 'csv' => 'CSV,', 'csv;' => 'CSV;', 'tsv' => 'TSV');
+		return ['sql' => 'SQL'];
 	}
 
 	/** Export database structure
@@ -790,31 +790,24 @@ class Adminer {
 	* @return null prints data
 	*/
 	function dumpTable($table, $style, $is_view = 0) {
-		if ($_POST["format"] != "sql") {
-			echo "\xef\xbb\xbf"; // UTF-8 byte order mark
-			if ($style) {
-				dump_csv(array_keys(fields($table)));
+		if ($is_view == 2) {
+			$fields = [];
+			foreach (fields($table) as $name => $field) {
+				$fields[] = idf_escape($name) . " $field[full_type]";
 			}
+			$create = "CREATE TABLE " . table($table) . " (" . implode(", ", $fields) . ")";
 		} else {
-			if ($is_view == 2) {
-				$fields = array();
-				foreach (fields($table) as $name => $field) {
-					$fields[] = idf_escape($name) . " $field[full_type]";
-				}
-				$create = "CREATE TABLE " . table($table) . " (" . implode(", ", $fields) . ")";
-			} else {
-				$create = create_sql($table, $_POST["auto_increment"], $style);
+			$create = create_sql($table, $_POST["auto_increment"], $style);
+		}
+		set_utf8mb4($create);
+		if ($style && $create) {
+			if ($style == "DROP+CREATE" || $is_view == 1) {
+				echo "DROP " . ($is_view == 2 ? "VIEW" : "TABLE") . " IF EXISTS " . table($table) . ";\n";
 			}
-			set_utf8mb4($create);
-			if ($style && $create) {
-				if ($style == "DROP+CREATE" || $is_view == 1) {
-					echo "DROP " . ($is_view == 2 ? "VIEW" : "TABLE") . " IF EXISTS " . table($table) . ";\n";
-				}
-				if ($is_view == 1) {
-					$create = remove_definer($create);
-				}
-				echo "$create;\n\n";
+			if ($is_view == 1) {
+				$create = remove_definer($create);
 			}
+			echo "$create;\n\n";
 		}
 	}
 
@@ -828,22 +821,21 @@ class Adminer {
 		global $connection, $jush;
 		$max_packet = ($jush == "sqlite" ? 0 : 1048576); // default, minimum is 1024
 		if ($style) {
-			if ($_POST["format"] == "sql") {
-				if ($style == "TRUNCATE+INSERT") {
-					echo truncate_sql($table) . ";\n";
-				}
-				$fields = fields($table);
+			if ($style == "TRUNCATE+INSERT") {
+				echo truncate_sql($table) . ";\n";
 			}
+			$fields = fields($table);
+
 			$result = $connection->query($query, 1); // 1 - MYSQLI_USE_RESULT //! enum and set as numbers
 			if ($result) {
 				$insert = "";
 				$buffer = "";
-				$keys = array();
+				$keys = [];
 				$suffix = "";
 				$fetch_function = ($table != '' ? 'fetch_assoc' : 'fetch_row');
 				while ($row = $result->$fetch_function()) {
 					if (!$keys) {
-						$values = array();
+						$values = [];
 						foreach ($row as $val) {
 							$field = $result->fetch_field();
 							$keys[] = $field->name;
@@ -852,32 +844,25 @@ class Adminer {
 						}
 						$suffix = ($style == "INSERT+UPDATE" ? "\nON DUPLICATE KEY UPDATE " . implode(", ", $values) : "") . ";\n";
 					}
-					if ($_POST["format"] != "sql") {
-						if ($style == "table") {
-							dump_csv($keys);
-							$style = "INSERT";
-						}
-						dump_csv($row);
+
+					if (!$insert) {
+						$insert = "INSERT INTO " . table($table) . " (" . implode(", ", array_map('idf_escape', $keys)) . ") VALUES";
+					}
+					foreach ($row as $key => $val) {
+						$field = $fields[$key];
+						$row[$key] = ($val !== null
+							? unconvert_field($field, preg_match(number_type(), $field["type"]) && !preg_match('~\[~', $field["full_type"]) && is_numeric($val) ? $val : q(($val === false ? 0 : $val)))
+							: "NULL"
+						);
+					}
+					$s = ($max_packet ? "\n" : " ") . "(" . implode(",\t", $row) . ")";
+					if (!$buffer) {
+						$buffer = $insert . $s;
+					} elseif (strlen($buffer) + 4 + strlen($s) + strlen($suffix) < $max_packet) { // 4 - length specification
+						$buffer .= ",$s";
 					} else {
-						if (!$insert) {
-							$insert = "INSERT INTO " . table($table) . " (" . implode(", ", array_map('idf_escape', $keys)) . ") VALUES";
-						}
-						foreach ($row as $key => $val) {
-							$field = $fields[$key];
-							$row[$key] = ($val !== null
-								? unconvert_field($field, preg_match(number_type(), $field["type"]) && !preg_match('~\[~', $field["full_type"]) && is_numeric($val) ? $val : q(($val === false ? 0 : $val)))
-								: "NULL"
-							);
-						}
-						$s = ($max_packet ? "\n" : " ") . "(" . implode(",\t", $row) . ")";
-						if (!$buffer) {
-							$buffer = $insert . $s;
-						} elseif (strlen($buffer) + 4 + strlen($s) + strlen($suffix) < $max_packet) { // 4 - length specification
-							$buffer .= ",$s";
-						} else {
-							echo $buffer . $suffix;
-							$buffer = $insert . $s;
-						}
+						echo $buffer . $suffix;
+						$buffer = $insert . $s;
 					}
 				}
 				if ($buffer) {
@@ -907,9 +892,8 @@ class Adminer {
 		$ext = (preg_match('~sql~', $_POST["format"]) ? "sql" : ($multi_table ? "tar" : "csv")); // multiple CSV packed to TAR
 		header("Content-Type: " .
 			($output == "gz" ? "application/x-gzip" :
-			($ext == "tar" ? "application/x-tar" :
 			($ext == "sql" || $output != "file" ? "text/plain" : "text/csv") . "; charset=utf-8"
-		)));
+		));
 		if ($output == "gz") {
 			ob_start('ob_gzencode', 1e6);
 		}
@@ -962,7 +946,7 @@ class Adminer {
 					foreach ($usernames as $username => $password) {
 						if ($password !== null) {
 							$dbs = $_SESSION["db"][$vendor][$server][$username];
-							foreach (($dbs ? array_keys($dbs) : array("")) as $db) {
+							foreach (($dbs ? array_keys($dbs) : [""]) as $db) {
 								$output .= "<li><a href='" . h(auth_url($vendor, $server, $username, $db)) . "'>($drivers[$vendor]) " . h($username . ($server != "" ? "@" . $this->serverName($server) : "") . ($db != "" ? " - $db" : "")) . "</a>\n";
 							}
 						}
@@ -973,7 +957,7 @@ class Adminer {
 				echo "<ul id='logins'>\n$output</ul>\n" . script("mixin(qs('#logins'), {onmouseover: menuOver, onmouseout: menuOut});");
 			}
 		} else {
-			$tables = array();
+			$tables = [];
 			if ($_GET["ns"] !== "" && !$missing && DB != "") {
 				$connection->select_db(DB);
 				$tables = table_status('', true);
@@ -988,12 +972,12 @@ class Adminer {
 <script<?=nonce() ?>>
 <?php
 				if ($tables) {
-					$links = array();
+					$links = [];
 					foreach ($tables as $table => $type) {
 						$links[] = preg_quote($table, '/');
 					}
 					echo "var jushLinks = { $jush: [ '" . js_escape(ME) . (support("table") ? "table=" : "select=") . "\$&', /\\b(" . implode("|", $links) . ")\\b/g ] };\n";
-					foreach (array("bac", "bra", "sqlite_quo", "mssql_bra") as $val) {
+					foreach (["bac", "bra", "sqlite_quo", "mssql_bra"] as $val) {
 						echo "jushLinks.$val = jushLinks.$jush;\n";
 					}
 				}
@@ -1044,19 +1028,19 @@ bodyLoad('<?=(is_object($connection) ? preg_replace('~^(\d\.?\d).*~s', '\1', $se
 		hidden_fields_get();
 		$db_events = script("mixin(qsl('select'), {onmousedown: dbMouseDown, onchange: dbChange});");
 		echo "<span title='" . lang('database') . "'>" . lang('DB') . "</span>: " . ($databases
-			? "<select name='db'>" . optionlist(array("" => "") + $databases, DB) . "</select>$db_events"
+			? "<select name='db'>" . optionlist(["" => ""] + $databases, DB) . "</select>$db_events"
 			: "<input name='db' value='" . h(DB) . "' autocapitalize='off'>\n"
 		);
 		echo "<input type='submit' value='" . lang('Use') . "'" . ($databases ? " class='hidden'" : "") . ">\n";
 		if (support("scheme")) {
 			if ($missing != "db" && DB != "" && $connection->select_db(DB)) {
-				echo "<br>" . lang('Schema') . ": <select name='ns'>" . optionlist(array("" => "") + $adminer->schemas(), $_GET["ns"]) . "</select>$db_events";
+				echo "<br>" . lang('Schema') . ": <select name='ns'>" . optionlist(["" => ""] + $adminer->schemas(), $_GET["ns"]) . "</select>$db_events";
 				if ($_GET["ns"] != "") {
 					set_schema($_GET["ns"]);
 				}
 			}
 		}
-		foreach (array("import", "sql", "schema", "dump", "privileges") as $val) {
+		foreach (["import", "sql", "schema", "dump", "privileges"] as $val) {
 			if (isset($_GET[$val])) {
 				echo "<input type='hidden' name='$val' value=''>";
 				break;
@@ -1080,7 +1064,7 @@ bodyLoad('<?=(is_object($connection) ? preg_replace('~^(\d\.?\d).*~s', '\1', $se
 				;
 				echo (support("table") || support("indexes")
 					? '<a href="' . h(ME) . 'table=' . urlencode($table) . '"'
-						. bold(in_array($table, array($_GET["table"], $_GET["create"], $_GET["indexes"], $_GET["foreign"], $_GET["trigger"], $_GET["select"])), (is_view($status) ? "view" : "structure"))
+						. bold(in_array($table, [$_GET["table"], $_GET["create"], $_GET["indexes"], $_GET["foreign"], $_GET["trigger"], $_GET["select"]]), (is_view($status) ? "view" : "structure"))
 						. " title='" . lang('Show structure') . "'>$name</a>"
 					: "<span>$name</span>"
 				) . "\n";
