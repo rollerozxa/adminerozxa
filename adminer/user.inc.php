@@ -115,7 +115,7 @@ if ($_POST && !$error) {
 	}
 }
 
-page_header((isset($_GET["host"]) ? 'Username' . ": " . h("$USER@$_GET[host]") : 'Create user'), $error, ["privileges" => ['', 'Privileges']]);
+page_header((isset($_GET["host"]) ? "Username: " . h("$USER@$_GET[host]") : 'Create user'), $error, ["privileges" => ['', 'Privileges']]);
 
 if ($_POST) {
 	$row = $_POST;

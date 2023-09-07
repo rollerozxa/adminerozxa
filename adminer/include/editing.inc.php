@@ -287,7 +287,7 @@ function edit_fields($fields, $collations, $type = "TABLE", $foreign_keys = []) 
 <td id="label-default"<?=$default_class; ?>>Default value
 <?=(support("comment") ? "<td id='label-comment'$comment_class>Comment" : ""); ?>
 <?php } ?>
-<td><? echo "<input type='image' class='icon' name='add[" . (support("move_col") ? 0 : count($fields)) . "]' src='../adminer/static/plus.gif' alt='+' title='Add next'>" . script("row_count = " . count($fields) . ";"); ?>
+<td><?php echo "<input type='image' class='icon' name='add[" . (support("move_col") ? 0 : count($fields)) . "]' src='../adminer/static/plus.gif' alt='+' title='Add next'>" . script("row_count = " . count($fields) . ";"); ?>
 </thead>
 <tbody>
 <?php
@@ -518,7 +518,7 @@ function doc_link($paths, $text = "<sup>?</sup>") {
 		$urls['sql'] = "https://mariadb.com/kb/en/library/";
 		$paths['sql'] = (isset($paths['mariadb']) ? $paths['mariadb'] : str_replace(".html", "/", $paths['sql']));
 	}
-	return ($paths[$jush] ? "<a href='" . h($urls[$jush] . $paths[$jush]) . "'" . target_blank() . ">$text</a>" : "");
+	return ($paths[$jush] ? "<a href='" . h($urls[$jush] . $paths[$jush]) . "' target='_blank'>$text</a>" : "");
 }
 
 /** Wrap gzencode() for usage in ob_start()

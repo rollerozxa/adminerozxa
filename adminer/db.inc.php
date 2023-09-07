@@ -41,7 +41,7 @@ if ($tables_views && !$error && !$_POST["search"]) {
 	queries_redirect(substr(ME, 0, -1), $message, $result);
 }
 
-page_header(($_GET["ns"] == "" ? 'Database' . ": " . h(DB) : 'Schema' . ": " . h($_GET["ns"])), $error, true);
+page_header(($_GET["ns"] == "" ? "Database: " . h(DB) : "Schema: " . h($_GET["ns"])), $error, true);
 
 if ($adminer->homepage()) {
 	if ($_GET["ns"] !== "") {
@@ -221,7 +221,7 @@ if ($adminer->homepage()) {
 				foreach ($rows as $row) {
 					echo "<tr>";
 					echo "<th>" . h($row["Name"]);
-					echo "<td>" . ($row["Execute at"] ? 'At given time' . "<td>" . $row["Execute at"] : 'Every' . " " . $row["Interval value"] . " " . $row["Interval field"] . "<td>$row[Starts]");
+					echo "<td>" . ($row["Execute at"] ? "At given time<td>" . $row["Execute at"] : "Every " . $row["Interval value"] . " " . $row["Interval field"] . "<td>$row[Starts]");
 					echo "<td>$row[Ends]";
 					echo '<td><a href="' . h(ME) . 'event=' . urlencode($row["Name"]) . '">Alter</a>';
 				}

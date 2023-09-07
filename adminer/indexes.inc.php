@@ -94,7 +94,7 @@ if (!$row) {
 <table cellspacing="0" class="nowrap">
 <thead><tr>
 <th id="label-type">Index Type
-<th><input type="submit" class="wayoff">Column (length)
+<th>Column (length)
 <th id="label-name">Name
 <th><noscript><?="<input type='image' class='icon' name='add[0]' src='../adminer/static/plus.gif' alt='+' title='Add next'>"; ?></noscript>
 </thead>

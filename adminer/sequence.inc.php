@@ -16,7 +16,7 @@ if ($_POST && !$error) {
 	}
 }
 
-page_header($SEQUENCE != "" ? 'Alter sequence' . ": " . h($SEQUENCE) : 'Create sequence', $error);
+page_header($SEQUENCE != "" ? "Alter sequence: " . h($SEQUENCE) : 'Create sequence', $error);
 
 if (!$row) {
 	$row["name"] = $SEQUENCE;

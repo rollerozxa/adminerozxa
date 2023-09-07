@@ -7,7 +7,7 @@ if (!$fields) {
 $table_status = table_status1($TABLE, true);
 $name = $adminer->tableName($table_status);
 
-page_header(($fields && is_view($table_status) ? $table_status['Engine'] == 'materialized view' ? 'Materialized view' : 'View' : 'Table') . ": " . ($name != "" ? $name : h($TABLE)), $error);
+page_header(($fields && is_view($table_status) ? ($table_status['Engine'] == 'materialized view' ? 'Materialized view' : 'View') : 'Table') . ": " . ($name != "" ? $name : h($TABLE)), $error);
 
 $adminer->selectLinks($table_status);
 $comment = $table_status["Comment"];

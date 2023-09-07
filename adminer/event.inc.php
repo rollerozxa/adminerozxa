@@ -26,7 +26,7 @@ if ($_POST && !$error) {
 	}
 }
 
-page_header(($EVENT != "" ? 'Alter event' . ": " . h($EVENT) : 'Create event'), $error);
+page_header(($EVENT != "" ? 'Alter event: '.h($EVENT) : 'Create event'), $error);
 
 if (!$row && $EVENT != "") {
 	$rows = get_rows("SELECT * FROM information_schema.EVENTS WHERE EVENT_SCHEMA = " . q(DB) . " AND EVENT_NAME = " . q($EVENT));

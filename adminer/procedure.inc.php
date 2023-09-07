@@ -36,7 +36,7 @@ $routine_languages = routine_languages();
 
 <form action="" method="post" id="form">
 <p>Name: <input name="name" value="<?=h($row["name"]) ?>" data-maxlength="64" autocapitalize="off">
-<?=($routine_languages ? 'Language' . ": " . html_select("language", $routine_languages, $row["language"]) . "\n" : ""); ?>
+<?=($routine_languages ? "Language: " . html_select("language", $routine_languages, $row["language"]) . "\n" : ""); ?>
 <input type="submit" value="Save">
 <div class="scrollable">
 <table cellspacing="0" class="nowrap">

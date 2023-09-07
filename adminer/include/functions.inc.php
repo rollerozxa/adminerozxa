@@ -301,7 +301,7 @@ function odd($return = ' class="odd"') {
 	if (!$return) { // reset counter
 		$i = -1;
 	}
-	return ($i++ % 2 ? $return : '');
+	return ($i++ % 2 ? $return : ' class="even"');
 }
 
 /** Escape string for JavaScript apostrophes

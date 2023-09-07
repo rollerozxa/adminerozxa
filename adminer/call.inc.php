@@ -1,6 +1,6 @@
 <?php
 $PROCEDURE = ($_GET["name"] ? $_GET["name"] : $_GET["call"]);
-page_header('Call' . ": " . h($PROCEDURE), $error);
+page_header("Call: " . h($PROCEDURE), $error);
 
 $routine = routine($_GET["call"], (isset($_GET["callf"]) ? "FUNCTION" : "PROCEDURE"));
 $in = [];

@@ -175,41 +175,6 @@ if ($_POST && !$error) {
 				}
 				queries_redirect(remove_from_uri(), sprintf('%d item(s) have been affected.', $affected), $result);
 			}
-
-		} elseif (!is_string($file = get_file("csv_file", true))) {
-			$error = upload_error($file);
-		} elseif (!preg_match('~~u', $file)) {
-			$error = 'File must be in UTF-8 encoding.';
-		} else {
-			cookie("adminer_import", "output=" . urlencode($adminer_import["output"]) . "&format=" . urlencode($_POST["separator"]));
-			$result = true;
-			$cols = array_keys($fields);
-			preg_match_all('~(?>"[^"]*"|[^"\r\n]+)+~', $file, $matches);
-			$affected = count($matches[0]);
-			$driver->begin();
-			$separator = ($_POST["separator"] == "csv" ? "," : ($_POST["separator"] == "tsv" ? "\t" : ";"));
-			$rows = [];
-			foreach ($matches[0] as $key => $val) {
-				preg_match_all("~((?>\"[^\"]*\")+|[^$separator]*)$separator~", $val . $separator, $matches2);
-				if (!$key && !array_diff($matches2[1], $cols)) { //! doesn't work with column names containing ",\n
-					// first row corresponds to column names - use it for table structure
-					$cols = $matches2[1];
-					$affected--;
-				} else {
-					$set = [];
-					foreach ($matches2[1] as $i => $col) {
-						$set[idf_escape($cols[$i])] = ($col == "" && $fields[$cols[$i]]["null"] ? "NULL" : q(str_replace('""', '"', preg_replace('~^"|"$~', '', $col))));
-					}
-					$rows[] = $set;
-				}
-			}
-			$result = (!$rows || $driver->insertUpdate($TABLE, $rows, $primary));
-			if ($result) {
-				$result = $driver->commit();
-			}
-			queries_redirect(remove_from_uri("page"), sprintf('%d row(s) have been imported.', $affected), $result);
-			$driver->rollback(); // after queries_redirect() to not overwrite error
-
 		}
 	}
 }
@@ -551,7 +516,7 @@ if (!$columns && support("table")) {
 					}
 				}
 				if ($format) {
-					print_fieldset("export", 'Export' . " <span id='selected2'></span>");
+					print_fieldset("export", "Export <span id='selected2'></span>");
 					$output = $adminer->dumpOutput();
 					echo ($output ? html_select("output", $output, $adminer_import["output"]) . " " : "");
 					echo html_select("format", $format, $adminer_import["format"]);
@@ -563,19 +528,6 @@ if (!$columns && support("table")) {
 			}
 
 			echo "</div></div>\n";
-
-			if ($adminer->selectImportPrint()) {
-				echo "<div>";
-				echo "<a href='#import'>Import</a>";
-				echo script("qsl('a').onclick = partial(toggle, 'import');", "");
-				echo "<span id='import' class='hidden'>: ";
-				echo "<input type='file' name='csv_file'> ";
-				echo html_select("separator", ["csv" => "CSV,", "csv;" => "CSV;", "tsv" => "TSV"], $adminer_import["format"], 1); // 1 - select
-				echo " <input type='submit' name='import' value='Import'>";
-				echo "</span>";
-				echo "</div>";
-			}
-
 			echo "<input type='hidden' name='token' value='$token'>\n";
 			echo "</form>\n";
 			echo (!$group && $select ? "" : script("tableCheck();"));

@@ -9,7 +9,7 @@ class Adminer {
 	* @return string HTML code
 	*/
 	function name() {
-		return "<a href='https://www.adminerevo.org/'" . target_blank() . " id='h1'>AdminerEvo</a>";
+		return "Adminerozxa";
 	}
 
 	/** Connection parameters
@@ -120,10 +120,10 @@ class Adminer {
 		global $drivers;
 		echo "<table cellspacing='0' class='layout'>\n";
 		echo $this->loginFormField('driver', '<tr><th>System<td>', html_select("auth[driver]", $drivers, DRIVER, "loginDriver(this);") . "\n");
-		echo $this->loginFormField('server', '<tr><th>Server<td>', '<input name="auth[server]" value="' . h(SERVER) . '" title="hostname[:port]" placeholder="localhost" autocapitalize="off">' . "\n");
-		echo $this->loginFormField('username', '<tr><th>Username<td>', '<input name="auth[username]" id="username" value="' . h($_GET["username"]) . '" autocomplete="username" autocapitalize="off">' . script("focus(qs('#username')); qs('#username').form['auth[driver]'].onchange();"));
+		echo $this->loginFormField('server', '<tr><th>Server<td>', '<input type="text" name="auth[server]" value="' . h(SERVER) . '" title="hostname[:port]" placeholder="localhost" autocapitalize="off">' . "\n");
+		echo $this->loginFormField('username', '<tr><th>Username<td>', '<input type="text" name="auth[username]" id="username" value="' . h($_GET["username"]) . '" autocomplete="username" autocapitalize="off">' . script("focus(qs('#username')); qs('#username').form['auth[driver]'].onchange();"));
 		echo $this->loginFormField('password', '<tr><th>Password<td>', '<input type="password" name="auth[password]" autocomplete="current-password">' . "\n");
-		echo $this->loginFormField('db', '<tr><th>Database<td>', '<input name="auth[db]" value="' . h($_GET["db"]) . '" autocapitalize="off">' . "\n");
+		echo $this->loginFormField('db', '<tr><th>Database<td>', '<input type="text" name="auth[db]" value="' . h($_GET["db"]) . '" autocapitalize="off">' . "\n");
 		echo "</table>\n";
 		echo "<p><input type='submit' value='Login'>\n";
 		echo checkbox("auth[permanent]", 1, $_COOKIE["adminer_permanent"], 'Permanent login') . "\n";
@@ -296,7 +296,7 @@ class Adminer {
 		if (preg_match('~json~', $field["type"])) {
 			$return = "<code class='jush-js'>$return</code>";
 		}
-		return ($link ? "<a href='" . h($link) . "'" . (is_url($link) ? target_blank() : "") . ">$return</a>" : $return);
+		return ($link ? "<a href='" . h($link) . "'" . (is_url($link) ?  "target='_blank'" : "") . ">$return</a>" : $return);
 	}
 
 	/** Value conversion used in select and edit
@@ -488,13 +488,6 @@ class Adminer {
 	* @return bool whether to print default commands
 	*/
 	function selectCommandPrint() {
-		return !information_schema(DB);
-	}
-
-	/** Print import box in select
-	* @return bool whether to print default import
-	*/
-	function selectImportPrint() {
 		return !information_schema(DB);
 	}
 
@@ -991,17 +984,23 @@ bodyLoad('<?=(is_object($connection) ? preg_replace('~^(\d\.?\d).*~s', '\1', $se
 			$links = [];
 			if (DB == "" || !$missing) {
 				if (support("sql")) {
-					$links[] = "<a href='" . h(ME) . "sql='" . bold(isset($_GET["sql"]) && !isset($_GET["import"])) . ">SQL command</a>";
-					$links[] = "<a href='" . h(ME) . "import='" . bold(isset($_GET["import"])) . ">Import</a>";
+					$links[] = " <a href='" . h(ME) . "sql='" . bold(isset($_GET["sql"]) && !isset($_GET["import"])) . ">SQL command</a>";
+					$links[] = " <a href='" . h(ME) . "import='" . bold(isset($_GET["import"])) . ">Import</a>";
 				}
 				if (support("dump")) {
-					$links[] = "<a href='" . h(ME) . "dump=" . urlencode(isset($_GET["table"]) ? $_GET["table"] : $_GET["select"]) . "' id='dump'" . bold(isset($_GET["dump"])) . ">Export</a>";
+					$links[] = " <a href='" . h(ME) . "dump=" . urlencode(isset($_GET["table"]) ? $_GET["table"] : $_GET["select"]) . "' id='dump'" . bold(isset($_GET["dump"])) . ">Export</a>";
 				}
 			}
+
+			$blarg = $_GET["ns"] !== "" && !$missing && DB != "";
+
+			if ($blarg) {
+				$links[] = ' <a href="' . h(ME) . 'create="' . bold($_GET["create"] === "") . ">Create table</a>";
+			}
+
 			echo generate_linksbar($links);
 
-			if ($_GET["ns"] !== "" && !$missing && DB != "") {
-				echo generate_linksbar(['<a href="' . h(ME) . 'create="' . bold($_GET["create"] === "") . ">Create table</a>"]);
+			if ($blarg) {
 				if (!$tables) {
 					echo "<p class='message'>No tables.\n";
 				} else {

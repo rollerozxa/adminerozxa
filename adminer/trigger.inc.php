@@ -29,7 +29,7 @@ if ($_POST) {
 	$row = $_POST;
 }
 
-page_header(($name != "" ? 'Alter trigger' . ": " . h($name) : 'Create trigger'), $error, ["table" => $TABLE]);
+page_header(($name != "" ? 'Alter trigger: ' . h($name) : 'Create trigger'), $error, ["table" => $TABLE]);
 ?>
 <form action="" method="post" id="form">
 <table cellspacing="0" class="layout">

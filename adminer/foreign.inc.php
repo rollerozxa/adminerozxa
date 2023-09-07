@@ -23,7 +23,7 @@ if ($_POST && !$error && !$_POST["add"] && !$_POST["change"] && !$_POST["change-
 		query_redirect($alter . $drop, $location, $message);
 	} else {
 		query_redirect($alter . ($name != "" ? "$drop," : "") . "\nADD" . format_foreign_key($row), $location, $message);
-		$error = 'Source and target columns must have the same data type, there must be an index on the target columns and referenced data must exist.' . "<br>$error"; //! no partitioning
+		$error = "Source and target columns must have the same data type, there must be an index on the target columns and referenced data must exist.<br>$error"; //! no partitioning
 	}
 }
 
