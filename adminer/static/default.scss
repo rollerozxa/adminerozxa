@@ -1,0 +1,435 @@
+/** @author Ondrej Valka, http://valka.info
+  * @author Amanda Axelsson, https://voxelmanip.se
+  */
+
+$grid: #444;
+$bg: #0F0F0F;
+$bg_box: #191919;
+$bg_box2: #060606;
+
+body {
+	color: #ffffff;
+	background: $bg;
+	font: 90%/1.25 Verdana, Arial, Helvetica, sans-serif;
+	margin: 0;
+	width: -moz-fit-content;
+	width: fit-content;
+}
+
+a {
+	color: #47a8e9;
+	text-decoration: none;
+
+	&:hover {
+		color: #e74c3c;
+		text-decoration: underline;
+	}
+}
+
+a.text:hover {
+	text-decoration: none;
+}
+
+a.jush-help:hover {
+	color: inherit;
+}
+
+.jush a {
+	color: white !important;
+}
+
+h1 {
+	font-size: 150%;
+	margin: 0;
+	padding: .8em 1em;
+	color: #777;
+}
+
+h2 {
+	margin: 0 0 20px -18px;
+}
+
+h1, h2 {
+	font-size: 150%;
+	padding: .8em 1em;
+	font-weight: normal;
+	border-bottom: 1px solid $grid;
+	background: $bg_box;
+}
+
+h3 {
+	font-weight: normal;
+	font-size: 130%;
+	margin: 1em 0 0;
+}
+
+form {
+	margin: 0;
+}
+
+td table {
+	width: 100%;
+	margin: 0;
+}
+
+table {
+	margin: 1em 20px 0 0;
+	border-collapse: collapse;
+	font-size: 90%;
+	border-top: 0;
+}
+
+td, th {
+	border: 1px solid $grid;
+	padding: .3em .5em;
+}
+
+th {
+	background: #111;
+	text-align: left;
+}
+
+thead th, thead td {
+	background: #080808;
+	color: white;
+	border: 1px solid $grid;
+	padding: .3em .5em;
+}
+
+fieldset {
+	display: inline;
+	vertical-align: top;
+	padding: .5em .8em;
+	margin: .8em .5em 0 0;
+	border: 1px solid $grid;
+}
+
+p {
+	margin: .8em 20px 0 0;
+}
+
+img {
+	vertical-align: middle;
+	border: 0;
+}
+
+td img {
+	max-width: 200px;
+	max-height: 200px;
+}
+
+code {
+	background: #111;
+}
+
+tbody tr:hover td, tbody tr:hover th {
+	background: #1a1a1a;
+}
+
+pre {
+	margin: 1em 0 0;
+}
+
+pre, textarea {
+	font: 100%/1.25 monospace;
+}
+
+.block {
+	display: block;
+}
+
+.version {
+	color: #777;
+	font-size: 67%;
+}
+
+.js .hidden, .nojs .jsonly {
+	display: none;
+}
+
+.js .column {
+	position: absolute;
+	background: #ddf;
+	padding: .27em 1ex .3em 0;
+	margin-top: -.27em;
+}
+
+.nowrap td, .nowrap th, td.nowrap, p.nowrap {
+	white-space: pre;
+}
+
+.wrap td {
+	white-space: normal;
+}
+
+.error {
+	color: #ffc6c6;
+	background: #200;
+
+	b {
+		font-weight: normal;
+	}
+}
+
+.message {
+	color: #c6ffc6;
+	background: #020;
+}
+
+.error, .message {
+	padding: .5em .8em;
+	margin: 1em 20px 0 0;
+}
+
+.char	{ color: #0ab10a; }
+.date	{ color: #992199; }
+.enum	{ color: #16a3a3; }
+.binary	{ color: #ee4d4d; }
+
+.odd td {
+	background: #0c0c0c;
+}
+.even td {
+	background: #171717;
+}
+
+.js .checkable .checked td, .js .checkable .checked th {
+	background: #ddf;
+}
+
+.time {
+	color: silver;
+	font-size: 70%;
+}
+
+.function, .number, .datetime {
+	text-align: right;
+}
+
+.type {
+	width: 15ex;
+	width: auto\9;
+}
+
+.options select {
+	width: 20ex;
+	width: auto\9;
+}
+
+.view {
+	font-style: italic;
+}
+
+.active {
+	font-weight: bold;
+}
+
+.sqlarea {
+	width: 98%;
+}
+
+.icon {
+	width: 18px;
+	height: 18px;
+	padding: 3px;
+}
+
+.jush {
+	color: white !important;
+}
+
+.size {
+	width: 6ex;
+}
+
+.help {
+	cursor: help;
+}
+
+.footer {
+	position: sticky;
+	bottom: 0;
+	margin-right: -20px;
+	border: 1px solid $grid;
+
+	& > div {
+		background: #000;
+		padding: 5px;
+	}
+
+	fieldset {
+		margin-top: 0;
+	}
+
+	a {
+		white-space: nowrap;
+		margin-right: 20px;
+	}
+}
+
+.logout {
+	margin-top: .5em;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.loadmore {
+	margin-left: 1ex;
+}
+
+/* .edit used in designs */
+#menu {
+	position: absolute;
+	margin: 10px 0 0;
+	padding: 0 0 30px 0;
+	top: 2em;
+	left: 0;
+	width: 19em;
+}
+
+#menu p, #logins, #tables {
+	padding: .8em 1em;
+	margin: 0;
+	border-bottom: 1px solid $grid;
+}
+
+#logins li, #tables li {
+	list-style: none;
+}
+
+#dbs {
+	overflow: hidden;
+}
+
+#logins, #tables {
+	white-space: nowrap;
+	overflow: auto;
+}
+
+#content {
+	margin: 2em 0 0 21em;
+	padding: 10px 20px 20px 0;
+}
+
+#lang {
+	position: absolute;
+	top: 0;
+	left: 0;
+	line-height: 1.8em;
+	padding: .3em 1em;
+}
+
+#breadcrumb {
+	white-space: nowrap;
+	position: absolute;
+	top: 0;
+	left: 21em;
+	height: 2em;
+	line-height: 1.8em;
+	padding: 0 1em;
+	margin: 0 0 0 -18px;
+
+	a {
+		color: #e74c3c;
+	}
+}
+
+#schema {
+	margin-left: 60px;
+	position: relative;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+
+	.table {
+		border: 1px solid silver;
+		padding: 0 2px;
+		cursor: move;
+		position: absolute;
+	}
+
+	.references {
+		position: absolute;
+	}
+}
+
+.links a { white-space: nowrap; margin-right: 20px; }
+
+#help {
+	position: absolute;
+	border: 1px solid #999;
+	background: #111;
+	padding: 5px;
+	font-family: monospace;
+	z-index: 1;
+}
+
+@media all and (max-device-width: 880px) {
+	.pages {
+		left: auto;
+	}
+
+	#menu {
+		position: static;
+		width: auto;
+	}
+
+	#content {
+		margin-left: 10px;
+	}
+
+	#lang {
+		position: static;
+		border-top: 1px solid #999;
+	}
+
+	#breadcrumb {
+		left: auto;
+	}
+}
+
+@media print {
+
+	#lang,
+	#menu {
+		display: none;
+	}
+
+	#content {
+		margin-left: 1em;
+	}
+
+	#breadcrumb {
+		left: 1em;
+	}
+
+	.nowrap td,
+	.nowrap th,
+	td.nowrap {
+		white-space: normal;
+	}
+}
+
+textarea, input {
+	font-size: 11pt;
+	background-color: #111;
+	border: 1px solid $grid;
+	color: white;
+	padding: 5px;
+	vertical-align: top;
+}
+
+input[type=submit], select {
+	font-size: 11pt;
+	border: 1px solid $grid;
+	background-color: #111;
+	color: white;
+	padding: 5px 15px;
+
+	&:hover {
+		background-color: darken(#111, 2%);
+	}
+	&:active {
+		background-color: darken(#111, 5%);
+	}
+}
