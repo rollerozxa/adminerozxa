@@ -7,7 +7,7 @@
 * @return null
 */
 function page_header($title, $error = "", $breadcrumb = [], $title2 = "") {
-	global $LANG, $VERSION, $adminer, $drivers, $jush;
+	global $VERSION, $adminer, $drivers, $jush;
 	page_headers();
 	if (is_ajax() && $error) {
 		page_messages($error);
@@ -17,30 +17,30 @@ function page_header($title, $error = "", $breadcrumb = [], $title2 = "") {
 	$title_page = strip_tags($title_all . (SERVER != "" && SERVER != "localhost" ? h(" - " . SERVER) : "") . " - " . $adminer->name());
 	?>
 <!DOCTYPE html>
-<html lang="<?=$LANG; ?>" dir="ltr">
+<html lang="en" dir="ltr">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="robots" content="noindex">
-<title><?=$title_page ?></title>
+<title><?=$title_page; ?></title>
 <link rel="stylesheet" type="text/css" href="../adminer/static/default.css">
-<?=script_src("../adminer/static/functions.js") ?>
-<?=script_src("static/editing.js") ?>
+<?=script_src("../adminer/static/functions.js"); ?>
+<?=script_src("static/editing.js"); ?>
 <?php if ($adminer->head()) { ?>
 <link rel="shortcut icon" type="image/x-icon" href="../adminer/static/favicon.ico">
 <link rel="apple-touch-icon" href="../adminer/static/favicon.ico">
 <?php foreach ($adminer->css() as $css) { ?>
-<link rel="stylesheet" type="text/css" href="<?=h($css) ?>">
+<link rel="stylesheet" type="text/css" href="<?=h($css); ?>">
 <?php } ?>
 <?php } ?>
 
 <body class="ltr nojs">
 <script<?=nonce() ?>>
 document.body.className = document.body.className.replace(/ nojs/, ' js');
-var offlineMessage = '<?=js_escape(lang('You are offline.')) ?>';
-var thousandsSeparator = '<?=js_escape(lang(',')) ?>';
+var offlineMessage = 'You are offline.';
+var thousandsSeparator = ',';
 </script>
 
 <div id="help" class="jush-<?=$jush ?> jsonly hidden"></div>
-<?=script("mixin(qs('#help'), {onmouseover: function () { helpOpen = 1; }, onmouseout: helpMouseout});") ?>
+<?=script("mixin(qs('#help'), {onmouseover: function () { helpOpen = 1; }, onmouseout: helpMouseout});"); ?>
 
 <div id="content">
 <?php
@@ -49,7 +49,7 @@ var thousandsSeparator = '<?=js_escape(lang(',')) ?>';
 		echo '<p id="breadcrumb"><a href="' . h($link ? $link : ".") . '">' . $drivers[DRIVER] . '</a> &raquo; ';
 		$link = substr(preg_replace('~\b(db|ns)=[^&]*&~', '', ME), 0, -1);
 		$server = $adminer->serverName(SERVER);
-		$server = ($server != "" ? $server : lang('Server'));
+		$server = ($server != "" ? $server : 'Server');
 		if ($breadcrumb === false) {
 			echo "$server\n";
 		} else {
@@ -160,7 +160,7 @@ function page_footer($missing = "") {
 <form action="" method="post">
 <p class="logout">
 <input type="submit" name="logout" value="Logout" id="logout">
-<input type="hidden" name="token" value="<?=$token ?>">
+<input type="hidden" name="token" value="<?=$token; ?>">
 </p>
 </form>
 <?php } ?>

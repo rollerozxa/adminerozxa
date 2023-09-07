@@ -40,7 +40,7 @@ foreach (process_list() as $i => $row) {
 			($jush == "sql" && $key == "Info" && preg_match("~Query|Killed~", $row["Command"]) && $val != "") ||
 			($jush == "pgsql" && $key == "current_query" && $val != "<IDLE>") ||
 			($jush == "oracle" && $key == "sql_text" && $val != "")
-			? "<code class='jush-$jush'>" . shorten_utf8($val, 100, "</code>") . ' <a href="' . h(ME . ($row["db"] != "" ? "db=" . urlencode($row["db"]) . "&" : "") . "sql=" . urlencode($val)) . '">' . lang('Clone') . '</a>'
+			? "<code class='jush-$jush'>" . shorten_utf8($val, 100, "</code>") . ' <a href="' . h(ME . ($row["db"] != "" ? "db=" . urlencode($row["db"]) . "&" : "") . "sql=" . urlencode($val)) . '">Clone</a>'
 			: h($val)
 		);
 	}
@@ -52,10 +52,10 @@ foreach (process_list() as $i => $row) {
 <p>
 <?php
 if (support("kill")) {
-	echo ($i + 1) . "/" . lang('%d in total', max_connections());
-	echo "<p><input type='submit' value='" . lang('Kill') . "'>\n";
+	echo ($i + 1) . "/" . sprintf('%d in total', max_connections());
+	echo "<p><input type='submit' value='Kill'>\n";
 }
 ?>
-<input type="hidden" name="token" value="<?=$token ?>">
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>
-<?=script("tableCheck();") ?>
+<?=script("tableCheck();"); ?>

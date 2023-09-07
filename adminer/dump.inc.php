@@ -120,11 +120,8 @@ SET foreign_key_checks = 0;
 }
 
 page_header('Export', $error, ($_GET["export"] != "" ? ["table" => $_GET["export"]] : []), h(DB));
-?>
+echo '<form action="" method="post"><table cellspacing="0" class="layout">';
 
-<form action="" method="post">
-<table cellspacing="0" class="layout">
-<?php
 $db_style = ['', 'USE', 'DROP+CREATE', 'CREATE'];
 $table_style = ['', 'DROP+CREATE', 'CREATE'];
 $data_style = ['', 'TRUNCATE+INSERT', 'INSERT'];
@@ -140,25 +137,24 @@ if (!isset($row["events"])) { // backwards compatibility
 	$row["triggers"] = $row["table_style"];
 }
 
-echo "<tr><th>" . lang('Output') . "<td>" . html_select("output", $adminer->dumpOutput(), $row["output"], 0) . "\n"; // 0 - radio
+echo "<tr><th>Output<td>" . html_select("output", $adminer->dumpOutput(), $row["output"], 0) . "\n"; // 0 - radio
 
-echo "<tr><th>" . lang('Format') . "<td>" . html_select("format", $adminer->dumpFormat(), $row["format"], 0) . "\n"; // 0 - radio
+echo "<tr><th>Format<td>" . html_select("format", $adminer->dumpFormat(), $row["format"], 0) . "\n"; // 0 - radio
 
-echo ($jush == "sqlite" ? "" : "<tr><th>" . lang('Database') . "<td>" . html_select('db_style', $db_style, $row["db_style"])
-	. (support("routine") ? checkbox("routines", 1, $row["routines"], lang('Routines')) : "")
-	. (support("event") ? checkbox("events", 1, $row["events"], lang('Events')) : "")
-);
+echo "<tr><th>Database<td>" . html_select('db_style', $db_style, $row["db_style"])
+	. (support("routine") ? checkbox("routines", 1, $row["routines"], 'Routines') : "")
+	. (support("event") ? checkbox("events", 1, $row["events"], 'Events') : "");
 
-echo "<tr><th>" . lang('Tables') . "<td>" . html_select('table_style', $table_style, $row["table_style"])
-	. checkbox("auto_increment", 1, $row["auto_increment"], lang('Auto Increment'))
-	. (support("trigger") ? checkbox("triggers", 1, $row["triggers"], lang('Triggers')) : "")
+echo "<tr><th>Tables<td>" . html_select('table_style', $table_style, $row["table_style"])
+	. checkbox("auto_increment", 1, $row["auto_increment"], 'Auto Increment')
+	. (support("trigger") ? checkbox("triggers", 1, $row["triggers"], 'Triggers') : "")
 ;
 
-echo "<tr><th>" . lang('Data') . "<td>" . html_select('data_style', $data_style, $row["data_style"]);
+echo "<tr><th>Data<td>" . html_select('data_style', $data_style, $row["data_style"]);
 ?>
 </table>
 <p><input type="submit" value="Export">
-<input type="hidden" name="token" value="<?=$token ?>">
+<input type="hidden" name="token" value="<?=$token; ?>">
 
 <table cellspacing="0">
 <?php
@@ -167,8 +163,8 @@ $prefixes = [];
 if (DB != "") {
 	$checked = ($TABLE != "" ? "" : " checked");
 	echo "<thead><tr>";
-	echo "<th style='text-align: left;'><label class='block'><input type='checkbox' id='check-tables'$checked>" . lang('Tables') . "</label>" . script("qs('#check-tables').onclick = partial(formCheck, /^tables\\[/);", "");
-	echo "<th style='text-align: right;'><label class='block'>" . lang('Data') . "<input type='checkbox' id='check-data'$checked></label>" . script("qs('#check-data').onclick = partial(formCheck, /^data\\[/);", "");
+	echo "<th style='text-align: left;'><label class='block'><input type='checkbox' id='check-tables'$checked>Tables</label>" . script("qs('#check-tables').onclick = partial(formCheck, /^tables\\[/);", "");
+	echo "<th style='text-align: right;'><label class='block'>Data<input type='checkbox' id='check-data'$checked></label>" . script("qs('#check-data').onclick = partial(formCheck, /^data\\[/);", "");
 	echo "</thead>\n";
 
 	$views = "";
@@ -192,7 +188,7 @@ if (DB != "") {
 
 } else {
 	echo "<thead><tr><th style='text-align: left;'>";
-	echo "<label class='block'><input type='checkbox' id='check-databases'" . ($TABLE == "" ? " checked" : "") . ">" . lang('Database') . "</label>";
+	echo "<label class='block'><input type='checkbox' id='check-databases'" . ($TABLE == "" ? " checked" : "") . ">Database</label>";
 	echo script("qs('#check-databases').onclick = partial(formCheck, /^databases\\[/);", "");
 	echo "</thead>\n";
 	$databases = $adminer->databases();

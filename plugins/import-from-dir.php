@@ -62,9 +62,9 @@ class AdminerImportFromDir {
 
 		if ($posted !== null || !isset($_POST['webfile'])) {
 			# use existing translation strings
-			echo "<fieldset><legend>" . lang('From server') . "</legend><div>";
-			echo 'Webserver file <select name="webfilename">' . optionlist(['' => lang('Select')] + $files, $posted, true) . '</select>';
-			echo ' <input type="submit" name="webfile" value="' . lang('Run file') . '">';
+			echo "<fieldset><legend>From server</legend><div>";
+			echo 'Webserver file <select name="webfilename">' . optionlist(['' => 'Select'] + $files, $posted, true) . '</select>';
+			echo ' <input type="submit" name="webfile" value="Run file">';
 			echo "</div></fieldset>\n";
 			$posted = null;
 			return false; # skip core UI

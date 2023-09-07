@@ -135,7 +135,7 @@ function auth_error($error) {
 	echo "<form action='' method='post'>\n";
 	echo "<div>";
 	if (hidden_fields($_POST, ["auth"])) { // expired session
-		echo "<p class='message'>" . 'The action will be performed after successful login with the same credentials.' . "\n";
+		echo "<p class='message'>The action will be performed after successful login with the same credentials.\n";
 	}
 	echo "</div>\n";
 	$adminer->loginForm();
@@ -147,7 +147,7 @@ function auth_error($error) {
 if (isset($_GET["username"]) && !class_exists("Min_DB")) {
 	unset($_SESSION["pwds"][DRIVER]);
 	unset_permanent();
-	page_header('No extension', lang('None of the supported PHP extensions (%s) are available.', implode(", ", $possible_drivers)), false);
+	page_header('No extension', sprintf('None of the supported PHP extensions (%s) are available.', implode(", ", $possible_drivers)), false);
 	page_footer("auth");
 	exit;
 }
@@ -157,7 +157,7 @@ stop_session(true);
 if (isset($_GET["username"]) && is_string(get_password())) {
 	list($host, $port) = explode(":", SERVER, 2);
 	if (preg_match('~^\s*([-+]?\d+)~', $port, $match) && ($match[1] < 1024 || $match[1] > 65535)) { // is_numeric('80#') would still connect to port 80
-		auth_error(lang('Connecting to privileged ports is not allowed.'));
+		auth_error('Connecting to privileged ports is not allowed.');
 	}
 	check_invalid_login();
 	$connection = connect();
@@ -166,12 +166,12 @@ if (isset($_GET["username"]) && is_string(get_password())) {
 
 $login = null;
 if (!is_object($connection) || ($login = $adminer->login($_GET["username"], get_password())) !== true) {
-	$error = (is_string($connection) ? h($connection) : (is_string($login) ? $login : lang('Invalid credentials.')));
-	auth_error($error . (preg_match('~^ | $~', get_password()) ? '<br>' . lang('There is a space in the input password which might be the cause.') : ''));
+	$error = (is_string($connection) ? h($connection) : (is_string($login) ? $login : 'Invalid credentials.'));
+	auth_error($error . (preg_match('~^ | $~', get_password()) ? '<br>There is a space in the input password which might be the cause.' : ''));
 }
 
 if ($_POST["logout"] && $has_token && !verify_token()) {
-	page_header('Logout', lang('Invalid CSRF token. Send the form again.'));
+	page_header('Logout', 'Invalid CSRF token. Send the form again.');
 	page_footer("db");
 	exit;
 }
@@ -195,15 +195,15 @@ if ($_POST) {
 			}
 		}
 		$error = (!$_POST["token"] && $max_vars
-			? lang('Maximum number of allowed fields exceeded. Please increase %s.', "'$ini'")
-			: lang('Invalid CSRF token. Send the form again.') . ' ' . lang('If you did not send this request from Adminer then close this page.')
+			? sprintf('Maximum number of allowed fields exceeded. Please increase %s.', "'$ini'")
+			: 'Invalid CSRF token. Send the form again. If you did not send this request from Adminer then close this page.'
 		);
 	}
 
 } elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
 	// posted form with no data means that post_max_size exceeded because Adminer always sends token at least
-	$error = lang('Too big POST data. Reduce the data or increase the %s configuration directive.', "'post_max_size'");
+	$error = sprintf('Too big POST data. Reduce the data or increase the %s configuration directive.', "'post_max_size'");
 	if (isset($_GET["sql"])) {
-		$error .= ' ' . 'You can upload a big SQL file via FTP and import it from server.';
+		$error .= ' You can upload a big SQL file via FTP and import it from server.';
 	}
 }

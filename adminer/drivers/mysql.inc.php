@@ -201,7 +201,7 @@ if (!defined("DRIVER")) {
 			$connection->set_charset(charset($connection)); // available in MySQLi since PHP 5.0.5
 			$connection->query("SET sql_quote_show_create = 1, autocommit = 1");
 			if (min_version('5.7.8', 10.2, $connection)) {
-				$structured_types[lang('Strings')][] = "json";
+				$structured_types['Strings'][] = "json";
 				$types["json"] = 4294967295;
 			}
 			return $connection;
@@ -971,12 +971,12 @@ if (!defined("DRIVER")) {
 		$types = []; ///< @var array ($type => $maximum_unsigned_length, ...)
 		$structured_types = []; ///< @var array ($description => array($type, ...), ...)
 		foreach ([
-			lang('Numbers') => ["tinyint" => 3, "smallint" => 5, "mediumint" => 8, "int" => 10, "bigint" => 20, "decimal" => 66, "float" => 12, "double" => 21],
-			lang('Date and time') => ["date" => 10, "datetime" => 19, "timestamp" => 19, "time" => 10, "year" => 4],
-			lang('Strings') => ["char" => 255, "varchar" => 65535, "tinytext" => 255, "text" => 65535, "mediumtext" => 16777215, "longtext" => 4294967295],
-			lang('Lists') => ["enum" => 65535, "set" => 64],
-			lang('Binary') => ["bit" => 20, "binary" => 255, "varbinary" => 65535, "tinyblob" => 255, "blob" => 65535, "mediumblob" => 16777215, "longblob" => 4294967295],
-			lang('Geometry') => ["geometry" => 0, "point" => 0, "linestring" => 0, "polygon" => 0, "multipoint" => 0, "multilinestring" => 0, "multipolygon" => 0, "geometrycollection" => 0],
+			'Numbers' => ["tinyint" => 3, "smallint" => 5, "mediumint" => 8, "int" => 10, "bigint" => 20, "decimal" => 66, "float" => 12, "double" => 21],
+			'Date and time' => ["date" => 10, "datetime" => 19, "timestamp" => 19, "time" => 10, "year" => 4],
+			'Strings' => ["char" => 255, "varchar" => 65535, "tinytext" => 255, "text" => 65535, "mediumtext" => 16777215, "longtext" => 4294967295],
+			'Lists' => ["enum" => 65535, "set" => 64],
+			'Binary' => ["bit" => 20, "binary" => 255, "varbinary" => 65535, "tinyblob" => 255, "blob" => 65535, "mediumblob" => 16777215, "longblob" => 4294967295],
+			'Geometry' => ["geometry" => 0, "point" => 0, "linestring" => 0, "polygon" => 0, "multipoint" => 0, "multilinestring" => 0, "multipolygon" => 0, "geometrycollection" => 0],
 		] as $key => $val) {
 			$types += $val;
 			$structured_types[$key] = array_keys($val);

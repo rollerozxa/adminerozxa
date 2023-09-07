@@ -6,7 +6,7 @@ $row = $_POST;
 
 if ($_POST && !$error) {
 	if ($_POST["drop"]) {
-		query_redirect("DROP EVENT " . idf_escape($EVENT), substr(ME, 0, -1), lang('Event has been dropped.'));
+		query_redirect("DROP EVENT " . idf_escape($EVENT), substr(ME, 0, -1), sprintf('Event has been dropped.'));
 	} elseif (in_array($row["INTERVAL_FIELD"], $intervals) && isset($statuses[$row["STATUS"]])) {
 		$schedule = "\nON SCHEDULE " . ($row["INTERVAL_VALUE"]
 			? "EVERY " . q($row["INTERVAL_VALUE"]) . " $row[INTERVAL_FIELD]"
@@ -16,7 +16,7 @@ if ($_POST && !$error) {
 			) . " ON COMPLETION" . ($row["ON_COMPLETION"] ? "" : " NOT") . " PRESERVE"
 		;
 
-		queries_redirect(substr(ME, 0, -1), ($EVENT != "" ? lang('Event has been altered.') : lang('Event has been created.')), queries(($EVENT != ""
+		queries_redirect(substr(ME, 0, -1), ($EVENT != "" ? 'Event has been altered.' : 'Event has been created.'), queries(($EVENT != ""
 			? "ALTER EVENT " . idf_escape($EVENT) . $schedule
 			. ($EVENT != $row["EVENT_NAME"] ? "\nRENAME TO " . idf_escape($row["EVENT_NAME"]) : "")
 			: "CREATE EVENT " . idf_escape($row["EVENT_NAME"]) . $schedule
@@ -26,7 +26,7 @@ if ($_POST && !$error) {
 	}
 }
 
-page_header(($EVENT != "" ? lang('Alter event') . ": " . h($EVENT) : lang('Create event')), $error);
+page_header(($EVENT != "" ? 'Alter event' . ": " . h($EVENT) : 'Create event'), $error);
 
 if (!$row && $EVENT != "") {
 	$rows = get_rows("SELECT * FROM information_schema.EVENTS WHERE EVENT_SCHEMA = " . q(DB) . " AND EVENT_NAME = " . q($EVENT));
@@ -42,11 +42,11 @@ if (!$row && $EVENT != "") {
 <tr><th>Every<td><input type="number" name="INTERVAL_VALUE" value="<?=h($row["INTERVAL_VALUE"]); ?>" class="size"> <?php echo html_select("INTERVAL_FIELD", $intervals, $row["INTERVAL_FIELD"]) ?>
 <tr><th>Status<td><?=html_select("STATUS", $statuses, $row["STATUS"]) ?>
 <tr><th>Comment<td><input name="EVENT_COMMENT" value="<?=h($row["EVENT_COMMENT"]) ?>" data-maxlength="64">
-<tr><th><td><?=checkbox("ON_COMPLETION", "PRESERVE", $row["ON_COMPLETION"] == "PRESERVE", lang('On completion preserve')) ?>
+<tr><th><td><?=checkbox("ON_COMPLETION", "PRESERVE", $row["ON_COMPLETION"] == "PRESERVE", 'On completion preserve'); ?>
 </table>
 <p><?php textarea("EVENT_DEFINITION", $row["EVENT_DEFINITION"]); ?>
 <p>
 <input type="submit" value="Save">
-<?php if ($EVENT != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(lang('Drop %s?', $EVENT)) ?><?php } ?>
-<input type="hidden" name="token" value="<?=$token ?>">
+<?php if ($EVENT != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(sprintf('Drop %s?', $EVENT)); ?><?php } ?>
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>

@@ -38,7 +38,7 @@ if ($_GET["script"] == "version") {
 	exit;
 }
 
-global $adminer, $connection, $driver, $drivers, $edit_functions, $enum_length, $error, $functions, $grouping, $HTTPS, $inout, $jush, $LANG, $langs, $on_actions, $permanent, $structured_types, $has_token, $token, $translations, $types, $unsigned, $VERSION; // allows including Adminer inside a function
+global $adminer, $connection, $driver, $drivers, $edit_functions, $enum_length, $error, $functions, $grouping, $HTTPS, $inout, $jush, $langs, $on_actions, $permanent, $structured_types, $has_token, $token, $translations, $types, $unsigned, $VERSION; // allows including Adminer inside a function
 
 if (!$_SERVER["REQUEST_URI"]) { // IIS 5 compatibility
 	$_SERVER["REQUEST_URI"] = $_SERVER["ORIG_PATH_INFO"];
@@ -63,17 +63,6 @@ if (!defined("SID")) {
 	session_start();
 }
 
-// disable magic quotes to be able to use database escaping function
-remove_slashes([&$_GET, &$_POST, &$_COOKIE], $filter);
-if (function_exists("get_magic_quotes_runtime") && get_magic_quotes_runtime()) {
-	set_magic_quotes_runtime(false);
-}
-@set_time_limit(0); // @ - can be disabled
-@ini_set("zend.ze1_compatibility_mode", false); // @ - deprecated
-@ini_set("precision", 15); // @ - can be disabled, 15 - internal PHP precision
-
-include "../adminer/include/lang.inc.php";
-include "../adminer/lang/$LANG.inc.php";
 include "../adminer/include/pdo.inc.php";
 include "../adminer/include/driver.inc.php";
 include "./include/adminer.inc.php";

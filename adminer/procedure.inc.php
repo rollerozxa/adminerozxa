@@ -22,7 +22,7 @@ if ($_POST && !process_fields($row["fields"]) && !$error) {
 	);
 }
 
-page_header(($PROCEDURE != "" ? (isset($_GET["function"]) ? lang('Alter function') : lang('Alter procedure')) . ": " . h($PROCEDURE) : (isset($_GET["function"]) ? lang('Create function') : lang('Create procedure'))), $error);
+page_header(($PROCEDURE != "" ? (isset($_GET["function"]) ? 'Alter function' : 'Alter procedure') . ": " . h($PROCEDURE) : (isset($_GET["function"]) ? 'Create function' : 'Create procedure')), $error);
 
 if (!$_POST && $PROCEDURE != "") {
 	$row = routine($_GET["procedure"], $routine);
@@ -36,23 +36,23 @@ $routine_languages = routine_languages();
 
 <form action="" method="post" id="form">
 <p>Name: <input name="name" value="<?=h($row["name"]) ?>" data-maxlength="64" autocapitalize="off">
-<?=($routine_languages ? lang('Language') . ": " . html_select("language", $routine_languages, $row["language"]) . "\n" : "") ?>
+<?=($routine_languages ? 'Language' . ": " . html_select("language", $routine_languages, $row["language"]) . "\n" : ""); ?>
 <input type="submit" value="Save">
 <div class="scrollable">
 <table cellspacing="0" class="nowrap">
 <?php
 edit_fields($row["fields"], $collations, $routine);
 if (isset($_GET["function"])) {
-	echo "<tr><td>" . 'Return type';
+	echo "<tr><td>Return type";
 	edit_type("returns", $row["returns"], $collations, [], ($jush == "pgsql" ? ["void", "trigger"] : []));
 }
 ?>
 </table>
-<?=script("editFields();") ?>
+<?=script("editFields();"); ?>
 </div>
 <p><?php textarea("definition", $row["definition"]); ?>
 <p>
 <input type="submit" value="Save">
-<?php if ($PROCEDURE != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(lang('Drop %s?', $PROCEDURE)) ?><?php } ?>
-<input type="hidden" name="token" value="<?=$token ?>">
+<?php if ($PROCEDURE != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(sprintf('Drop %s?', $PROCEDURE)); ?><?php } ?>
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>

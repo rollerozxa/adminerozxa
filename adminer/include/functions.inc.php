@@ -733,7 +733,7 @@ function queries_redirect($location, $message, $redirect) {
 * @return string HTML code
 */
 function format_time($start) {
-	return lang('%.3f s', max(0, microtime(true) - $start));
+	return sprintf('%.3f s', max(0, microtime(true) - $start));
 }
 
 /** Get relative REQUEST_URI
@@ -809,7 +809,7 @@ function get_file($key, $decompress = false) {
 */
 function upload_error($error) {
 	$max_size = ($error == UPLOAD_ERR_INI_SIZE ? ini_get("upload_max_filesize") : 0); // post_max_size is checked in index.php
-	return ($error ? lang('Unable to upload a file.') . ($max_size ? " " . lang('Maximum allowed file size is %sB.', $max_size) : "") : lang('File does not exist.'));
+	return ($error ? 'Unable to upload a file.' . ($max_size ? " Maximum allowed file size is ".$max_size.'B.' : "") : 'File does not exist.');
 }
 
 /** Create repeat pattern for preg
@@ -927,7 +927,7 @@ function column_foreign_keys($table) {
 function enum_input($type, $attrs, $field, $value, $empty = null) {
 	global $adminer;
 	preg_match_all("~'((?:[^']|'')*)'~", $field["length"], $matches);
-	$return = ($empty !== null ? "<label><input type='$type'$attrs value='$empty'" . ((is_array($value) ? in_array($empty, $value) : $value === 0) ? " checked" : "") . "><i>" . lang('empty') . "</i></label>" : "");
+	$return = ($empty !== null ? "<label><input type='$type'$attrs value='$empty'" . ((is_array($value) ? in_array($empty, $value) : $value === 0) ? " checked" : "") . "><i>empty</i></label>" : "");
 	foreach ($matches[1] as $i => $val) {
 		$val = stripcslashes(str_replace("''", "'", $val));
 		$checked = (is_int($value) ? $value == $i+1 : (is_array($value) ? in_array($i+1, $value) : $value === $val));
@@ -958,7 +958,7 @@ function input($field, $value, $function) {
 	if ($reset && !$_POST["save"]) {
 		$function = null;
 	}
-	$functions = (isset($_GET["select"]) || $reset ? ["orig" => lang('original')] : []) + $adminer->editFunctions($field);
+	$functions = (isset($_GET["select"]) || $reset ? ["orig" => 'original'] : []) + $adminer->editFunctions($field);
 	$attrs = " name='fields[$name]'";
 	if ($field["type"] == "enum") {
 		echo h($functions[""]) . "<td>" . $adminer->editInput($_GET["edit"], $field, $attrs, $value);
@@ -1117,7 +1117,7 @@ function search_tables() {
 			}
 		}
 	}
-	echo ($sep ? "<p class='message'>" . lang('No tables.') : "</ul>") . "\n";
+	echo ($sep ? "<p class='message'>No tables." : "</ul>") . "\n";
 }
 
 /** Send headers for export
@@ -1364,8 +1364,8 @@ function slow_query($query) {
 <script<?=nonce() ?>>
 var timeout = setTimeout(function () {
 	ajax('<?=js_escape(ME) ?>script=kill', function () {
-	}, 'kill=<?=$kill; ?>&token=<?=$token ?>');
-}, <?=1000 * $timeout ?>);
+	}, 'kill=<?=$kill; ?>&token=<?=$token; ?>');
+}, <?=1000 * $timeout; ?>);
 </script>
 <?php
 	} else {
@@ -1456,20 +1456,20 @@ function edit_form($table, $fields, $row, $update) {
 	global $adminer, $jush, $token, $error;
 	$table_name = $adminer->tableName(table_status1($table, true));
 	page_header(
-		($update ? lang('Edit') : lang('Insert')),
+		($update ? 'Edit' : 'Insert'),
 		$error,
 		["select" => [$table, $table_name]],
 		$table_name
 	);
 	$adminer->editRowPrint($table, $fields, $row, $update);
 	if ($row === false) {
-		echo "<p class='error'>" . lang('No rows.') . "\n";
+		echo "<p class='error'>No rows.\n";
 	}
 	?>
 <form action="" method="post" enctype="multipart/form-data" id="form">
 <?php
 	if (!$fields) {
-		echo "<p class='error'>" . lang('You have no privileges to update this table.') . "\n";
+		echo "<p class='error'>You have no privileges to update this table.\n";
 	} else {
 		echo "<table cellspacing='0' class='layout'>" . script("qsl('table').onkeydown = editingKeydown;");
 
@@ -1525,16 +1525,16 @@ function edit_form($table, $fields, $row, $update) {
 	}
 	echo "<p>\n";
 	if ($fields) {
-		echo "<input type='submit' value='" . lang('Save') . "'>\n";
+		echo "<input type='submit' value='Save'>\n";
 		if (!isset($_GET["select"])) {
 			echo "<input type='submit' name='insert' value='" . ($update
-				? lang('Save and continue edit')
-				: lang('Save and insert next')
+				? 'Save and continue edit'
+				: 'Save and insert next'
 			) . "' title='Ctrl+Shift+Enter'>\n";
-			echo ($update ? script("qsl('input').onclick = function () { return !ajaxForm(this.form, '" . lang('Saving') . "…', this); };") : "");
+			echo ($update ? script("qsl('input').onclick = function () { return !ajaxForm(this.form, 'Saving…', this); };") : "");
 		}
 	}
-	echo ($update ? "<input type='submit' name='delete' value='" . lang('Delete') . "'>" . confirm() . "\n"
+	echo ($update ? "<input type='submit' name='delete' value='Delete'>" . confirm() . "\n"
 		: ($_POST || !$fields ? "" : script("focus(qsa('td', qs('#form'))[1].firstChild);"))
 	);
 	if (isset($_GET["select"])) {
@@ -1543,7 +1543,7 @@ function edit_form($table, $fields, $row, $update) {
 	?>
 <input type="hidden" name="referer" value="<?=h(isset($_POST["referer"]) ? $_POST["referer"] : $_SERVER["HTTP_REFERER"]) ?>">
 <input type="hidden" name="save" value="1">
-<input type="hidden" name="token" value="<?=$token ?>">
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>
 <?php
 }

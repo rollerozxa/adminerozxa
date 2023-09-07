@@ -32,7 +32,7 @@ if ($_POST && !$error && !isset($_POST["add_x"])) { // add is an image and PHP c
 		if (!$row["collation"]) {
 			redirect(substr(ME, 0, -1));
 		}
-		query_redirect("ALTER DATABASE " . idf_escape($name) . (preg_match('~^[a-z0-9_]+$~i', $row["collation"]) ? " COLLATE $row[collation]" : ""), substr(ME, 0, -1), lang('Database has been altered.'));
+		query_redirect("ALTER DATABASE " . idf_escape($name) . (preg_match('~^[a-z0-9_]+$~i', $row["collation"]) ? " COLLATE $row[collation]" : ""), substr(ME, 0, -1), 'Database has been altered.');
 	}
 }
 
@@ -61,7 +61,7 @@ if ($_POST) {
 echo ($_POST["add_x"] || strpos($name, "\n")
 	? '<textarea id="name" name="name" rows="10" cols="40">' . h($name) . '</textarea><br>'
 	: '<input name="name" id="name" value="' . h($name) . '" data-maxlength="64" autocapitalize="off">'
-) . "\n" . ($collations ? html_select("collation", ["" => "(" . lang('collation') . ")"] + $collations, $row["collation"]) . doc_link([
+) . "\n" . ($collations ? html_select("collation", ["" => "(collation)"] + $collations, $row["collation"]) . doc_link([
 	'sql' => "charset-charsets.html",
 	'mariadb' => "supported-character-sets-and-collations/",
 ]) : "");
@@ -70,10 +70,10 @@ echo script("focus(qs('#name'));");
 <input type="submit" value="Save">
 <?php
 if (DB != "") {
-	echo "<input type='submit' name='drop' value='" . lang('Drop') . "'>" . confirm(lang('Drop %s?', DB)) . "\n";
+	echo "<input type='submit' name='drop' value='Drop'>" . confirm(sprintf('Drop %s?', DB)) . "\n";
 } elseif (!$_POST["add_x"] && $_GET["db"] == "") {
-	echo "<input type='image' class='icon' name='add' src='../adminer/static/plus.gif' alt='+' title='" . lang('Add next') . "'>\n";
+	echo "<input type='image' class='icon' name='add' src='../adminer/static/plus.gif' alt='+' title='Add next'>\n";
 }
 ?>
-<input type="hidden" name="token" value="<?=$token ?>">
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>

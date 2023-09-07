@@ -44,15 +44,15 @@ if (!$_POST && $TABLE != "") {
 	}
 }
 
-page_header(($TABLE != "" ? lang('Alter view') : lang('Create view')), $error, ["table" => $TABLE], h($TABLE));
+page_header(($TABLE != "" ? 'Alter view' : 'Create view'), $error, ["table" => $TABLE], h($TABLE));
 ?>
 
 <form action="" method="post">
 <p>Name: <input name="name" value="<?=h($row["name"]) ?>" data-maxlength="64" autocapitalize="off">
-<?=(support("materializedview") ? " " . checkbox("materialized", 1, $row["materialized"], lang('Materialized view')) : "") ?>
+<?=(support("materializedview") ? " " . checkbox("materialized", 1, $row["materialized"], 'Materialized view') : ""); ?>
 <p><?php textarea("select", $row["select"]); ?>
 <p>
 <input type="submit" value="Save">
-<?php if ($TABLE != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(lang('Drop %s?', $TABLE)) ?><?php } ?>
-<input type="hidden" name="token" value="<?=$token ?>">
+<?php if ($TABLE != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(sprintf('Drop %s?', $TABLE)); ?><?php } ?>
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>

@@ -1,6 +1,6 @@
 <?php
 $PROCEDURE = ($_GET["name"] ? $_GET["name"] : $_GET["call"]);
-page_header(lang('Call') . ": " . h($PROCEDURE), $error);
+page_header('Call' . ": " . h($PROCEDURE), $error);
 
 $routine = routine($_GET["call"], (isset($_GET["callf"]) ? "FUNCTION" : "PROCEDURE"));
 $in = [];
@@ -48,8 +48,8 @@ if (!$error && $_POST) {
 			if (is_object($result)) {
 				select($result, $connection2);
 			} else {
-				echo "<p class='message'>" . 'Routine has been called, '.$affected.' row(s) affected.'
-					. " <span class='time'>" . @date("H:i:s") . "</span>\n" // @ - time zone may be not set
+				echo "<p class='message'>Routine has been called, $affected row(s) affected."
+					. " <span class='time'>".@date("H:i:s")."</span>\n" // @ - time zone may be not set
 				;
 			}
 		} while ($connection->next_result());
@@ -86,5 +86,5 @@ if ($in) {
 ?>
 <p>
 <input type="submit" value="Call">
-<input type="hidden" name="token" value="<?=$token ?>">
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>

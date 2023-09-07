@@ -48,7 +48,7 @@ if (isset($_GET["host"]) && ($result = $connection->query("SHOW GRANTS FOR " . q
 if ($_POST && !$error) {
 	$old_user = (isset($_GET["host"]) ? q($USER) . "@" . q($_GET["host"]) : "''");
 	if ($_POST["drop"]) {
-		query_redirect("DROP USER $old_user", ME . "privileges=", lang('User has been dropped.'));
+		query_redirect("DROP USER $old_user", ME . "privileges=", 'User has been dropped.');
 	} else {
 		$new_user = q($_POST["user"]) . "@" . q($_POST["host"]); // if $_GET["host"] is not set then $new_user is always different
 		$pass = $_POST["pass"];
@@ -106,7 +106,7 @@ if ($_POST && !$error) {
 			}
 		}
 
-		queries_redirect(ME . "privileges=", (isset($_GET["host"]) ? lang('User has been altered.') : lang('User has been created.')), !$error);
+		queries_redirect(ME . "privileges=", (isset($_GET["host"]) ? 'User has been altered.' : 'User has been created.'), !$error);
 
 		if ($created) {
 			// delete new user in case of an error
@@ -115,7 +115,7 @@ if ($_POST && !$error) {
 	}
 }
 
-page_header((isset($_GET["host"]) ? lang('Username') . ": " . h("$USER@$_GET[host]") : lang('Create user')), $error, ["privileges" => ['', lang('Privileges')]]);
+page_header((isset($_GET["host"]) ? 'Username' . ": " . h("$USER@$_GET[host]") : 'Create user'), $error, ["privileges" => ['', 'Privileges']]);
 
 if ($_POST) {
 	$row = $_POST;
@@ -134,15 +134,15 @@ if ($_POST) {
 <table cellspacing="0" class="layout">
 <tr><th>Server<td><input name="host" data-maxlength="60" value="<?=h($row["host"]) ?>" autocapitalize="off">
 <tr><th>Username<td><input name="user" data-maxlength="80" value="<?=h($row["user"]) ?>" autocapitalize="off">
-<tr><th>Password<td><input name="pass" id="pass" value="<?=h($row["pass"]) ?>" autocomplete="new-password">
+<tr><th>Password<td><input name="pass" id="pass" value="<?=h($row["pass"]); ?>" autocomplete="new-password">
 <?php if (!$row["hashed"]) { echo script("typePassword(qs('#pass'));"); } ?>
-<?=(min_version(8) ? "" : checkbox("hashed", 1, $row["hashed"], 'Hashed', "typePassword(this.form['pass'], this.checked);")) ?>
+<?=(min_version(8) ? "" : checkbox("hashed", 1, $row["hashed"], 'Hashed', "typePassword(this.form['pass'], this.checked);")); ?>
 </table>
 
 <?php
 //! MAX_* limits, REQUIRE
 echo "<table cellspacing='0'>\n";
-echo "<thead><tr><th colspan='2'>" . lang('Privileges') . doc_link(['sql' => "grant.html#priv_level"]);
+echo "<thead><tr><th colspan='2'>Privileges" . doc_link(['sql' => "grant.html#priv_level"]);
 $i = 0;
 foreach ($grants as $object => $grant) {
 	echo '<th>' . ($object != "*.*" ? "<input name='objects[$i]' value='" . h($object) . "' size='10' autocapitalize='off'>" : "<input type='hidden' name='objects[$i]' value='*.*' size='10'>*.*"); //! separate db, table, columns, PROCEDURE|FUNCTION, routine
@@ -167,7 +167,7 @@ foreach ([
 			if ($context == "Server Admin" && $object != (isset($grants["*.*"]) ? "*.*" : ".*")) {
 				echo "<td>";
 			} elseif (isset($_GET["grant"])) {
-				echo "<td><select name=$name><option><option value='1'" . ($value ? " selected" : "") . ">" . lang('Grant') . "<option value='0'" . ($value == "0" ? " selected" : "") . ">" . lang('Revoke') . "</select>";
+				echo "<td><select name=$name><option><option value='1'" . ($value ? " selected" : "") . ">Grant<option value='0'" . ($value == "0" ? " selected" : "") . ">Revoke</select>";
 			} else {
 				echo "<td align='center'><label class='block'>";
 				echo "<input type='checkbox' name=$name value='1'" . ($value ? " checked" : "") . ($privilege == "All privileges"
@@ -184,6 +184,6 @@ echo "</table>\n";
 ?>
 <p>
 <input type="submit" value="Save">
-<?php if (isset($_GET["host"])) { ?><input type="submit" name="drop" value="Drop"><?=confirm(lang('Drop %s?', "$USER@$_GET[host]")) ?><?php } ?>
-<input type="hidden" name="token" value="<?=$token ?>">
+<?php if (isset($_GET["host"])) { ?><input type="submit" name="drop" value="Drop"><?=confirm(sprintf('Drop %s?', "$USER@$_GET[host]")); ?><?php } ?>
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>

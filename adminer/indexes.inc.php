@@ -10,11 +10,7 @@ if (preg_match('~MyISAM|M?aria' . (min_version(5.7, '10.2.2') ? '|InnoDB' : '') 
 }
 $indexes = indexes($TABLE);
 $primary = [];
-if ($jush == "mongo") { // doesn't support primary key
-	$primary = $indexes["_id_"];
-	unset($index_types[0]);
-	unset($indexes["_id_"]);
-}
+
 $row = $_POST;
 
 if ($_POST && !$error && !$_POST["add"] && !$_POST["drop_col"]) {
@@ -100,14 +96,14 @@ if (!$row) {
 <th id="label-type">Index Type
 <th><input type="submit" class="wayoff">Column (length)
 <th id="label-name">Name
-<th><noscript><?="<input type='image' class='icon' name='add[0]' src='../adminer/static/plus.gif' alt='+' title='" . lang('Add next') . "'>" ?></noscript>
+<th><noscript><?="<input type='image' class='icon' name='add[0]' src='../adminer/static/plus.gif' alt='+' title='Add next'>"; ?></noscript>
 </thead>
 <?php
 if ($primary) {
 	echo "<tr><td>PRIMARY<td>";
 	foreach ($primary["columns"] as $key => $column) {
 		echo select_input(" disabled", $fields, $column);
-		echo "<label><input disabled type='checkbox'>" . lang('descending') . "</label> ";
+		echo "<label><input disabled type='checkbox'>descending</label> ";
 	}
 	echo "<td><td>\n";
 }
@@ -121,13 +117,13 @@ foreach ($row["indexes"] as $index) {
 		$i = 1;
 		foreach ($index["columns"] as $key => $column) {
 			echo "<span>" . select_input(
-				" name='indexes[$j][columns][$i]' title='" . lang('Column') . "'",
+				" name='indexes[$j][columns][$i]' title='Column'",
 				($fields ? array_combine($fields, $fields) : $fields),
 				$column,
 				"partial(" . ($i == count($index["columns"]) ? "indexesAddColumn" : "indexesChangeColumn") . ", '" . js_escape($jush == "sql" ? "" : $_GET["indexes"] . "_") . "')"
 			);
-			echo ($jush == "sql" || $jush == "mssql" ? "<input type='number' name='indexes[$j][lengths][$i]' class='size' value='" . h($index["lengths"][$key]) . "' title='" . lang('Length') . "'>" : "");
-			echo (support("descidx") ? checkbox("indexes[$j][descs][$i]", 1, $index["descs"][$key], lang('descending')) : "");
+			echo ($jush == "sql" || $jush == "mssql" ? "<input type='number' name='indexes[$j][lengths][$i]' class='size' value='" . h($index["lengths"][$key]) . "' title='Length'>" : "");
+			echo (support("descidx") ? checkbox("indexes[$j][descs][$i]", 1, $index["descs"][$key], 'descending') : "");
 			echo " </span>";
 			$i++;
 		}
@@ -142,5 +138,5 @@ foreach ($row["indexes"] as $index) {
 </div>
 <p>
 <input type="submit" value="Save">
-<input type="hidden" name="token" value="<?=$token ?>">
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>

@@ -24,8 +24,8 @@ function connect_error() {
 			}
 		}
 		echo generate_linksbar($links);
-		echo "<p>" . lang('%s version: %s through PHP extension %s', $drivers[DRIVER], "<b>" . h($connection->server_info) . "</b>", "<b>$connection->extension</b>") . "\n";
-		echo "<p>" . lang('Logged as: %s', "<b>" . h(logged_user()) . "</b>") . "\n";
+		echo "<p>" . sprintf('%s version: %s through PHP extension %s', $drivers[DRIVER], "<b>" . h($connection->server_info) . "</b>", "<b>$connection->extension</b>") . "\n";
+		echo "<p>" . sprintf('Logged as: %s', "<b>" . h(logged_user()) . "</b>") . "\n";
 		$databases = $adminer->databases();
 		if ($databases) {
 			$scheme = support("scheme");
@@ -38,7 +38,7 @@ function connect_error() {
 				. "<th>Database - <a href='" . h(ME) . "refresh=1'>Refresh</a>"
 				. "<td>Collation"
 				. "<td>Tables"
-				. "<td>Size - <a href='" . h(ME) . "dbsize=1'>" . 'Compute' . "</a>" . script("qsl('a').onclick = partial(ajaxSetHtml, '" . js_escape(ME) . "script=connect');", "")
+				. "<td>Size - <a href='".h(ME)."dbsize=1'>Compute</a>" . script("qsl('a').onclick = partial(ajaxSetHtml, '" . js_escape(ME) . "script=connect');", "")
 				. "</thead>\n"
 			;
 
@@ -50,8 +50,8 @@ function connect_error() {
 				echo "<tr" . odd() . ">" . (support("database") ? "<td>" . checkbox("db[]", $db, in_array($db, (array) $_POST["db"]), "", "", "", $id) : "");
 				echo "<th><a href='$root' id='$id'>" . h($db) . "</a>";
 				$collation = h(db_collation($db, $collations));
-				echo "<td>" . (support("database") ? "<a href='$root" . ($scheme ? "&amp;ns=" : "") . "&amp;database=' title='" . lang('Alter database') . "'>$collation</a>" : $collation);
-				echo "<td align='right'><a href='$root&amp;schema=' id='tables-" . h($db) . "' title='" . lang('Database schema') . "'>" . ($_GET["dbsize"] ? $tables : "?") . "</a>";
+				echo "<td>" . (support("database") ? "<a href='$root" . ($scheme ? "&amp;ns=" : "") . "&amp;database=' title='Alter database'>$collation</a>" : $collation);
+				echo "<td align='right'><a href='$root&amp;schema=' id='tables-" . h($db) . "' title='Database schema'>" . ($_GET["dbsize"] ? $tables : "?") . "</a>";
 				echo "<td align='right' id='size-" . h($db) . "'>" . ($_GET["dbsize"] ? db_size($db) : "?");
 				echo "\n";
 			}
@@ -59,9 +59,9 @@ function connect_error() {
 			echo "</table>\n";
 			echo (support("database")
 				? "<div class='footer'><div>\n"
-					. "<fieldset><legend>" . lang('Selected') . " <span id='selected'></span></legend><div>\n"
+					. "<fieldset><legend>Selected <span id='selected'></span></legend><div>\n"
 					. "<input type='hidden' name='all' value=''>" . script("qsl('input').onclick = function () { selectCount('selected', formChecked(this, /^db/)); };") // used by trCheck()
-					. "<input type='submit' name='drop' value='" . lang('Drop') . "'>" . confirm() . "\n"
+					. "<input type='submit' name='drop' value='Drop'>" . confirm() . "\n"
 					. "</div></fieldset>\n"
 					. "</div></div>\n"
 				: ""

@@ -11,14 +11,14 @@ if ($_POST) {
 		$drop = "DROP TRIGGER " . idf_escape($name) . ($jush == "pgsql" ? $on : "");
 		$location = ME . "table=" . urlencode($TABLE);
 		if ($_POST["drop"]) {
-			query_redirect($drop, $location, lang('Trigger has been dropped.'));
+			query_redirect($drop, $location, 'Trigger has been dropped.');
 		} else {
 			if ($name != "") {
 				queries($drop);
 			}
 			queries_redirect(
 				$location,
-				($name != "" ? lang('Trigger has been altered.') : lang('Trigger has been created.')),
+				($name != "" ? 'Trigger has been altered.' : 'Trigger has been created.'),
 				queries(create_trigger($on, $_POST))
 			);
 			if ($name != "") {
@@ -29,7 +29,7 @@ if ($_POST) {
 	$row = $_POST;
 }
 
-page_header(($name != "" ? lang('Alter trigger') . ": " . h($name) : lang('Create trigger')), $error, ["table" => $TABLE]);
+page_header(($name != "" ? 'Alter trigger' . ": " . h($name) : 'Create trigger'), $error, ["table" => $TABLE]);
 ?>
 <form action="" method="post" id="form">
 <table cellspacing="0" class="layout">
@@ -39,10 +39,10 @@ page_header(($name != "" ? lang('Alter trigger') . ": " . h($name) : lang('Creat
 <tr><th>Type<td><?=html_select("Type", $trigger_options["Type"], $row["Type"]) ?>
 </table>
 <p>Name: <input name="Trigger" value="<?=h($row["Trigger"]) ?>" data-maxlength="64" autocapitalize="off">
-<?=script("qs('#form')['Timing'].onchange();") ?>
+<?=script("qs('#form')['Timing'].onchange();"); ?>
 <p><?php textarea("Statement", $row["Statement"]); ?>
 <p>
 <input type="submit" value="Save">
-<?php if ($name != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(lang('Drop %s?', $name)) ?><?php } ?>
-<input type="hidden" name="token" value="<?=$token ?>">
+<?php if ($name != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(sprintf('Drop %s?', $name)); ?><?php } ?>
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>

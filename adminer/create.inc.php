@@ -119,7 +119,7 @@ if ($_POST && !process_fields($row["fields"]) && !$error) {
 	}
 }
 
-page_header(($TABLE != "" ? lang('Alter table') : lang('Create table')), $error, ["table" => $TABLE], h($TABLE));
+page_header(($TABLE != "" ? 'Alter table' : 'Create table'), $error, ["table" => $TABLE], h($TABLE));
 
 if (!$_POST) {
 	$row = [
@@ -166,10 +166,10 @@ foreach ($engines as $engine) {
 <form action="" method="post" id="form">
 <p>
 <?php if (support("columns") || $TABLE == "") { ?>
-Table name: <input name="name" data-maxlength="64" value="<?=h($row["name"]) ?>" autocapitalize="off">
+Table name: <input name="name" data-maxlength="64" value="<?=h($row["name"]); ?>" autocapitalize="off">
 <?php if ($TABLE == "" && !$_POST) { echo script("focus(qs('#form')['name']);"); } ?>
-<?=($engines ? "<select name='Engine'>" . optionlist(["" => "(" . lang('engine') . ")"] + $engines, $row["Engine"]) . "</select>" . on_help("getTarget(event).value", 1) . script("qsl('select').onchange = helpClose;") : "") ?>
- <?=($collations && !preg_match("~sqlite|mssql~", $jush) ? html_select("Collation", ["" => "(" . lang('collation') . ")"] + $collations, $row["Collation"]) : "") ?>
+<?=($engines ? "<select name='Engine'>" . optionlist(["" => "(engine)"] + $engines, $row["Engine"]) . "</select>" . on_help("getTarget(event).value", 1) . script("qsl('select').onchange = helpClose;") : "") ?>
+ <?=($collations && !preg_match("~sqlite|mssql~", $jush) ? html_select("Collation", ["" => "(collation)"] + $collations, $row["Collation"]) : ""); ?>
  <input type="submit" value="Save">
 <?php } ?>
 
@@ -184,7 +184,7 @@ edit_fields($row["fields"], $collations, "TABLE", $foreign_keys);
 </div>
 <p>
 Auto Increment: <input type="number" name="Auto_increment" size="6" value="<?=h($row["Auto_increment"]) ?>">
-<?=checkbox("defaults", 1, ($_POST ? $_POST["defaults"] : adminer_setting("defaults")), 'Default values', "columnShow(this.checked, 5)", "jsonly") ?>
+<?=checkbox("defaults", 1, ($_POST ? $_POST["defaults"] : adminer_setting("defaults")), 'Default values', "columnShow(this.checked, 5)", "jsonly"); ?>
 <?php
 $comments = ($_POST ? $_POST["comments"] : adminer_setting("comments"));
 echo (support("comment")
@@ -200,7 +200,7 @@ echo (support("comment")
 <input type="submit" value="Save">
 <?php } ?>
 
-<?php if ($TABLE != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(lang('Drop %s?', $TABLE)) ?><?php } ?>
+<?php if ($TABLE != "") { ?><input type="submit" name="drop" value="Drop"><?=confirm(sprintf('Drop %s?', $TABLE)); ?><?php } ?>
 <?php
 if (support("partitioning")) {
 	$partition_table = preg_match('~RANGE|LIST~', $row["partition_by"]);
@@ -210,7 +210,7 @@ if (support("partitioning")) {
 <?="<select name='partition_by'>" . optionlist(["" => ""] + $partition_by, $row["partition_by"]) . "</select>" . on_help("getTarget(event).value.replace(/./, 'PARTITION BY \$&')", 1) . script("qsl('select').onchange = partitionByChange;") ?>
 (<input name="partition" value="<?=h($row["partition"]) ?>">)
 Partitions: <input type="number" name="partitions" class="size<?=($partition_table || !$row["partition_by"] ? " hidden" : ""); ?>" value="<?php echo h($row["partitions"]) ?>">
-<table cellspacing="0" id="partition-table"<?=($partition_table ? "" : " class='hidden'") ?>>
+<table cellspacing="0" id="partition-table"<?=($partition_table ? "" : " class='hidden'"); ?>>
 <thead><tr><th>Partition name<th>Values</thead>
 <?php
 foreach ($row["partition_names"] as $key => $val) {
@@ -225,5 +225,5 @@ foreach ($row["partition_names"] as $key => $val) {
 <?php
 }
 ?>
-<input type="hidden" name="token" value="<?=$token ?>">
+<input type="hidden" name="token" value="<?=$token; ?>">
 </form>

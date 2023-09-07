@@ -135,11 +135,11 @@ if ($_POST && !$error) {
 					}
 				}
 			}
-			$message = lang('%d item(s) have been affected.', $affected);
+			$message = $affected.' item(s) have been affected.';
 			if ($_POST["clone"] && $result && $affected == 1) {
 				$last_id = last_id();
 				if ($last_id) {
-					$message = lang('Item%s has been inserted.', " $last_id");
+					$message = sprintf('Item%s has been inserted.', " $last_id");
 				}
 			}
 			queries_redirect(remove_from_uri($_POST["all"] && $_POST["delete"] ? "page" : ""), $message, $result);
@@ -173,7 +173,7 @@ if ($_POST && !$error) {
 					}
 					$affected += $connection->affected_rows;
 				}
-				queries_redirect(remove_from_uri(), lang('%d item(s) have been affected.', $affected), $result);
+				queries_redirect(remove_from_uri(), sprintf('%d item(s) have been affected.', $affected), $result);
 			}
 
 		} elseif (!is_string($file = get_file("csv_file", true))) {
@@ -207,7 +207,7 @@ if ($_POST && !$error) {
 			if ($result) {
 				$result = $driver->commit();
 			}
-			queries_redirect(remove_from_uri("page"), lang('%d row(s) have been imported.', $affected), $result);
+			queries_redirect(remove_from_uri("page"), sprintf('%d row(s) have been imported.', $affected), $result);
 			$driver->rollback(); // after queries_redirect() to not overwrite error
 
 		}
@@ -219,7 +219,7 @@ if (is_ajax()) {
 	page_headers();
 	ob_start();
 } else {
-	page_header(lang('Select') . ": $table_name", $error);
+	page_header("Select: $table_name", $error);
 }
 
 $set = null;
@@ -236,7 +236,7 @@ if (isset($rights["insert"]) || !support("table")) {
 $adminer->selectLinks($table_status, $set);
 
 if (!$columns && support("table")) {
-	echo "<p class='error'>" . lang('Unable to select the table') . ($fields ? "." : ": " . error()) . "\n";
+	echo "<p class='error'>Unable to select the table" . ($fields ? "." : ": " . error()) . "\n";
 } else {
 	echo "<form action='' id='form'>\n";
 	echo "<div style='display: none;'>";
@@ -305,7 +305,7 @@ if (!$columns && support("table")) {
 		}
 
 		if (!$rows) {
-			echo "<p class='message'>" . lang('No rows.') . "\n";
+			echo "<p class='message'>No rows.\n";
 		} else {
 			$backward_keys = $adminer->backwardKeys($TABLE, $table_name);
 
@@ -315,7 +315,7 @@ if (!$columns && support("table")) {
 			echo "<thead><tr>" . (!$group && $select
 				? ""
 				: "<td><input type='checkbox' id='all-page' class='jsonly'>" . script("qs('#all-page').onclick = partial(formCheck, /check/);", "")
-					. " <a href='" . h($_GET["modify"] ? remove_from_uri("modify") : $_SERVER["REQUEST_URI"] . "&modify=1") . "' title='" . lang('Modify') . "' class='edit-all'>" . lang('Modify') . "</a>");
+					. " <a href='" . h($_GET["modify"] ? remove_from_uri("modify") : $_SERVER["REQUEST_URI"] . "&modify=1") . "' title='Modify' class='edit-all'>Modify</a>");
 			$names = [];
 			$functions = [];
 			reset($select);
@@ -335,9 +335,9 @@ if (!$columns && support("table")) {
 						echo '<a href="' . h($href . ($order[0] == $column || $order[0] == $key || (!$order && $is_group && $group[0] == $column) ? $desc : '')) . '">'; // $order[0] == $key - COUNT(*)
 						echo apply_sql_function($val["fun"], $name) . "</a>"; //! columns looking like functions
 						echo "<span class='column hidden'>";
-						echo "<a href='" . h($href . $desc) . "' title='" . lang('descending') . "' class='text'> ↓</a>";
+						echo "<a href='" . h($href . $desc) . "' title='descending' class='text'> ↓</a>";
 						if (!$val["fun"]) {
-							echo '<a href="#fieldset-search" title="' . lang('Search') . '" class="text jsonly"> =</a>';
+							echo '<a href="#fieldset-search" title="Search" class="text jsonly"> =</a>';
 							echo script("qsl('a').onclick = partial(selectSearch, '" . js_escape($key) . "');");
 						}
 						echo "</span>";
@@ -356,7 +356,7 @@ if (!$columns && support("table")) {
 				}
 			}
 
-			echo ($backward_keys ? "<th>" . lang('Relations') : "") . "</thead>\n";
+			echo ($backward_keys ? '<th>Relations' : "") . "</thead>\n";
 
 			if (is_ajax()) {
 				if ($limit % 2 == 1 && $page % 2 == 1) {
@@ -386,7 +386,7 @@ if (!$columns && support("table")) {
 				}
 				echo "<tr" . odd() . ">" . (!$group && $select ? "" : "<td>"
 					. checkbox("check[]", substr($unique_idf, 1), in_array(substr($unique_idf, 1), (array) $_POST["check"]))
-					. ($is_group || information_schema(DB) ? "" : " <a href='" . h(ME . "edit=" . urlencode($TABLE) . $unique_idf) . "' class='edit' title='" . lang('edit') . "'>" . lang('edit') . "</a>")
+					. ($is_group || information_schema(DB) ? "" : " <a href='" . h(ME . "edit=" . urlencode($TABLE) . $unique_idf) . "' class='edit' title='edit'>edit</a>")
 				);
 
 				foreach ($row as $key => $val) {
@@ -443,7 +443,7 @@ if (!$columns && support("table")) {
 						} else {
 							$long = strpos($val, "<i>…</i>");
 							echo " data-text='" . ($long ? 2 : ($text ? 1 : 0)) . "'"
-								. ($editable ? "" : " data-warning='" . h(lang('Use edit link to modify this value.')) . "'")
+								. ($editable ? "" : " data-warning='" . h('Use edit link to modify this value.') . "'")
 								. ">$val</td>"
 							;
 						}
@@ -484,7 +484,7 @@ if (!$columns && support("table")) {
 				$pagination = ($limit != "" && ($found_rows === false || $found_rows > $limit || $page));
 				if ($pagination) {
 					echo (($found_rows === false ? count($rows) + 1 : $found_rows - $page * $limit) > $limit
-						? '<p><a href="' . h(remove_from_uri("page") . "&page=" . ($page + 1)) . '" class="loadmore">' . lang('Load more data') . '</a>'
+						? '<p><a href="' . h(remove_from_uri("page") . "&page=" . ($page + 1)) . '" class="loadmore">Load more data</a>'
 							. script("qsl('a').onclick = partial(selectLoadMore, " . (+$limit) . ", Loading…');", "")
 						: ''
 					);
@@ -502,8 +502,8 @@ if (!$columns && support("table")) {
 					);
 					echo "<fieldset>";
 					if ($jush != "simpledb") {
-						echo "<legend><a href='" . h(remove_from_uri("page")) . "'>" . lang('Page') . "</a></legend>";
-						echo script("qsl('a').onclick = function () { pageClick(this.href, +prompt('" . lang('Page') . "', '" . ($page + 1) . "')); return false; };");
+						echo "<legend><a href='" . h(remove_from_uri("page")) . "'>Page</a></legend>";
+						echo script("qsl('a').onclick = function () { pageClick(this.href, +prompt('Page', '" . ($page + 1) . "')); return false; };");
 						echo pagination(0, $page) . ($page > 5 ? " …" : "");
 						for ($i = max(1, $page - 4); $i < min($max_page, $page + 5); $i++) {
 							echo pagination($i, $page);
@@ -512,11 +512,11 @@ if (!$columns && support("table")) {
 							echo ($page + 5 < $max_page ? " …" : "");
 							echo ($exact_count && $found_rows !== false
 								? pagination($max_page, $page)
-								: " <a href='" . h(remove_from_uri("page") . "&page=last") . "' title='~$max_page'>" . lang('last') . "</a>"
+								: " <a href='" . h(remove_from_uri("page") . "&page=last") . "' title='~$max_page'>last</a>"
 							);
 						}
 					} else {
-						echo "<legend>" . lang('Page') . "</legend>";
+						echo "<legend>Page</legend>";
 						echo pagination(0, $page) . ($page > 1 ? " …" : "");
 						echo ($page ? pagination($page, $page) : "");
 						echo ($max_page > $page ? pagination($page + 1, $page) . ($max_page > $page + 1 ? " …" : "") : "");
@@ -525,20 +525,20 @@ if (!$columns && support("table")) {
 				}
 
 				echo "<fieldset>";
-				echo "<legend>" . lang('Whole result') . "</legend>";
+				echo "<legend>Whole result</legend>";
 				$display_rows = ($exact_count ? "" : "~ ") . $found_rows;
-				echo checkbox("all", 1, 0, ($found_rows !== false ? ($exact_count ? "" : "~ ") . lang('%d row(s)', $found_rows) : ""), "var checked = formChecked(this, /check/); selectCount('selected', this.checked ? '$display_rows' : checked); selectCount('selected2', this.checked || !checked ? '$display_rows' : checked);") . "\n";
+				echo checkbox("all", 1, 0, ($found_rows !== false ? ($exact_count ? "" : "~ ") . sprintf('%d row(s)', $found_rows) : ""), "var checked = formChecked(this, /check/); selectCount('selected', this.checked ? '$display_rows' : checked); selectCount('selected2', this.checked || !checked ? '$display_rows' : checked);") . "\n";
 				echo "</fieldset>\n";
 
 				if ($adminer->selectCommandPrint()) {
 					?>
 <fieldset<?=($_GET["modify"] ? '' : ' class="jsonly"'); ?>><legend>Modify</legend><div>
-<input type="submit" value="Save"<?=($_GET["modify"] ? '' : ' title="' . lang('Ctrl+click on a value to modify it.') . '"') ?>>
+<input type="submit" value="Save"<?=($_GET["modify"] ? '' : ' title="Ctrl+click on a value to modify it."') ?>>
 </div></fieldset>
 <fieldset><legend>Selected <span id="selected"></span></legend><div>
 <input type="submit" name="edit" value="Edit">
 <input type="submit" name="clone" value="Clone">
-<input type="submit" name="delete" value="Delete"><?=confirm() ?>
+<input type="submit" name="delete" value="Delete"><?=confirm(); ?>
 </div></fieldset>
 <?php
 				}
@@ -551,11 +551,11 @@ if (!$columns && support("table")) {
 					}
 				}
 				if ($format) {
-					print_fieldset("export", lang('Export') . " <span id='selected2'></span>");
+					print_fieldset("export", 'Export' . " <span id='selected2'></span>");
 					$output = $adminer->dumpOutput();
 					echo ($output ? html_select("output", $output, $adminer_import["output"]) . " " : "");
 					echo html_select("format", $format, $adminer_import["format"]);
-					echo " <input type='submit' name='export' value='" . lang('Export') . "'>\n";
+					echo " <input type='submit' name='export' value='Export'>\n";
 					echo "</div></fieldset>\n";
 				}
 
@@ -566,12 +566,12 @@ if (!$columns && support("table")) {
 
 			if ($adminer->selectImportPrint()) {
 				echo "<div>";
-				echo "<a href='#import'>" . lang('Import') . "</a>";
+				echo "<a href='#import'>Import</a>";
 				echo script("qsl('a').onclick = partial(toggle, 'import');", "");
 				echo "<span id='import' class='hidden'>: ";
 				echo "<input type='file' name='csv_file'> ";
 				echo html_select("separator", ["csv" => "CSV,", "csv;" => "CSV;", "tsv" => "TSV"], $adminer_import["format"], 1); // 1 - select
-				echo " <input type='submit' name='import' value='" . lang('Import') . "'>";
+				echo " <input type='submit' name='import' value='Import'>";
 				echo "</span>";
 				echo "</div>";
 			}

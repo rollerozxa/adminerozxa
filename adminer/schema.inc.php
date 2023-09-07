@@ -54,7 +54,7 @@ qs('#schema').onselectstart = function () { return false; };
 var tablePos = {<?=implode(",", $table_pos_js) . "\n" ?>};
 var em = qs('#schema').offsetHeight / <?=$top ?>;
 document.onmousemove = schemaMousemove;
-document.onmouseup = partialArg(schemaMouseup, '<?=js_escape(DB) ?>');
+document.onmouseup = partialArg(schemaMouseup, '<?=js_escape(DB); ?>');
 </script>
 <?php
 foreach ($schema as $name => $table) {

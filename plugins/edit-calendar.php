@@ -30,14 +30,6 @@ class AdminerEditCalendar {
 
 	function head() {
 		echo $this->prepend;
-		if ($this->langPath && function_exists('get_lang')) { // since Adminer 3.2.0
-			$lang = get_lang();
-			$lang = ($lang == "zh" ? "zh-CN" : ($lang == "zh-tw" ? "zh-TW" : $lang));
-			if ($lang != "en" && file_exists(sprintf($this->langPath, $lang))) {
-				echo script_src(sprintf($this->langPath, $lang));
-				echo script("jQuery(function () { jQuery.timepicker.setDefaults(jQuery.datepicker.regional['$lang']); });");
-			}
-		}
 	}
 
 	function editInput($table, $field, $attrs, $value) {
